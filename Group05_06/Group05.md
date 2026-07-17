@@ -26,11 +26,19 @@
 - Viết prompt yêu cầu AI tạo cấu trúc Postman Collection v2 dựa trên document đã chốt.
 - Import `EShop_Collection_v2.json` vào Postman.
 - Chạy thử toàn bộ các test cases, đối chiếu với code của backend (phát hiện một số bug như ID chẵn trả về string, endpoint checkout không validate dữ liệu).
+- **Ghi chú lại các "failure mode" của Postman** :
+  - *Lỗi so sánh kiểu dữ liệu ngầm định:* Khi API trả về string nhưng assert yêu cầu number, test báo fail mà không có hint cụ thể, dễ gây nhầm lẫn là do logic API sai thay vì do kiểu dữ liệu.
+  - *Quên cấu hình Environment/Token:* Nếu biến `{{baseUrl}}` hay `{{token}}` chưa có giá trị, Postman gửi đi raw string khiến API báo lỗi (như 401 Unauthorized), làm mất thời gian debug trước khi nhận ra lỗi do biến rỗng.
+  - *Silent Failure trong Test script:* Viết sai syntax JavaScript ở tab Tests có thể khiến test không chạy hết các lệnh phía dưới nhưng Postman không báo lỗi 문법 rõ ràng ra UI (chỉ bị skip ngầm).
 - Lưu kết quả minh chứng (minh chứng bao gồm collection v2, environment file).
 
 **Minh chứng**
 - `EShop_Collection_v2.json`
 - `EShop_Environment.json`
+- Hình ảnh API Test:
+  ![Run All](./Toàn/PostMan_RunAll.png)
+  ![Negative Case](./Toàn/PostMan_Negative_Cart.png)
+  ![Bug Evidence](./Toàn/PostMan_Bug_String.png)
 
 ---
 
