@@ -79,7 +79,6 @@
 ## Tổng hợp: Danh Sách Bugs / Contract Violations Tiềm Ẩn Cần Ghi Nhận
 
 > [!WARNING]
-> Qua phân tích code server.js, các bugs sau được phát hiện và **cả Toàn (Postman) lẫn Nam (Pact) cần ghi nhận trong report:**
 
 | # | Bug / Anomaly | Endpoint | Mô tả |
 |---|---|---|---|
