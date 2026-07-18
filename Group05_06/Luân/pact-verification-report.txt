@@ -1,0 +1,64 @@
+
+> contract_testing@1.0.0 test:provider
+> jest test/provider.test.js
+
+  console.log
+    [11:19:48.508] [32mINFO[39m (2491): [36mpact@17.0.1: Verifying provider[39m
+
+      at Object.write (node_modules/@pact-foundation/pact-core/src/logger/pino.ts:17:17)
+
+  console.log
+    [11:19:48.540] [32mINFO[39m (2491): [36mpact-core@19.2.0: Verifying Pacts.[39m
+
+      at Object.write (node_modules/@pact-foundation/pact-core/src/logger/pino.ts:17:17)
+
+  console.log
+    [11:19:48.543] [32mINFO[39m (2491): [36mpact-core@19.2.0: Verifying Pact Files[39m
+
+      at Object.write (node_modules/@pact-foundation/pact-core/src/logger/pino.ts:17:17)
+
+  console.log
+    [11:19:48.555] [32mINFO[39m (2491): [36m0.5.4: pact native library successfully found, and the correct version[39m
+
+      at Object.write (node_modules/@pact-foundation/pact-core/src/logger/pino.ts:17:17)
+          at Array.every (<anonymous>)
+
+2026-07-18T11:19:48.575598Z  INFO ThreadId(05) pact_verifier: Running setup provider state change handler 'cart is empty or ready' for 'a request to add item to cart'
+2026-07-18T11:19:48.593333Z  INFO ThreadId(05) pact_verifier: Running provider verification for 'a request to add item to cart'
+2026-07-18T11:19:48.593410Z  INFO ThreadId(05) pact_verifier::provider_client: Sending request to provider at http://127.0.0.1:33069/
+2026-07-18T11:19:48.593423Z  INFO ThreadId(05) pact_verifier::provider_client: Sending request HTTP Request ( method: POST, path: /api/cart, query: None, headers: Some({"Authorization": ["Bearer mock-token"], "Content-Type": ["application/json"]}), body: Present(28 bytes) )
+2026-07-18T11:19:48.604237Z  INFO ThreadId(05) pact_verifier::provider_client: Received response: HTTP Response ( status: 200, headers: Some({"x-powered-by": ["Express"], "content-length": ["27"], "etag": ["W/\"1b-TJwOU+vjK3qJFSNCd2YreHR6oao\""], "connection": ["close"], "date": ["Sat, 18 Jul 2026 11:19:48 GMT"], "access-control-allow-origin": ["*"], "content-type": ["application/json; charset=utf-8"]}), body: Present(27 bytes, application/json;charset=utf-8) )
+2026-07-18T11:19:48.605486Z  INFO ThreadId(05) pact_verifier: Running teardown provider state change handler 'cart is empty or ready' for 'a request to add item to cart'
+2026-07-18T11:19:48.614409Z  WARN ThreadId(05) pact_matching::metrics: 
+
+Please note:
+We are tracking events anonymously to gather important usage statistics like Pact version and operating system. To disable tracking, set the 'PACT_DO_NOT_TRACK' environment variable to 'true'.
+
+
+
+Verifying a pact between [1mEshopConsumer[0m and [1mEShopBackend[0m
+
+  a request to add item to cart (0s loading, 46ms verification)
+     Given cart is empty or ready
+    returns a response which
+      has status code [1m201[0m ([31mFAILED[0m)
+      includes headers
+        "[1mContent-Type[0m" with value "[1mapplication/json[0m" ([32mOK[0m)
+      has a matching body ([31mFAILED[0m)
+
+
+Failures:
+
+1) Verifying a pact between EshopConsumer and EShopBackend Given cart is empty or ready - a request to add item to cart
+    1.1) has a matching body
+           [1m$[0m -> Actual map is missing the following keys: productId, quantity
+    1.2) has status code 201
+           expected [31m201[0m but was [32m200[0m
+
+There were 1 pact failures
+
+  console.log
+    [11:19:48.646] [31mERROR[39m (2491): [36mpact-core@19.2.0: Verification unsuccessful[39m
+
+      at Object.write (node_modules/@pact-foundation/pact-core/src/logger/pino.ts:17:17)
+
