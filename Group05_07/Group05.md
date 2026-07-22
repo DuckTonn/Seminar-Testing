@@ -12,12 +12,13 @@
 
 ## Phạm Đức Toàn – 23127540
 
-- Nghiên cứu các công cụ Postman, Claude/ChatGPT và Karate phục vụ đề tài API & Contract Testing.
-- Tổng hợp thông tin về tính năng, ưu điểm, hạn chế và khả năng áp dụng của từng công cụ đối với hệ thống EShop.
-- Xây dựng bảng so sánh các công cụ dựa trên các tiêu chí: License/Cost, Learning Curve, EShop Fit, AI Capability, Community & Documentation.
-- Phân tích kết quả khảo sát và đề xuất lựa chọn **Postman kết hợp Claude** làm bộ công cụ chính của nhóm.
-- Hoàn thiện phần **Giới thiệu đề tài**, **Khảo sát công cụ**, **Ma trận so sánh** và **Lý do lựa chọn công cụ** trong tài liệu Tool Survey Proposal.
-- Evidence: `Tool_Research.md` (bao gồm bảng so sánh công cụ và tài liệu tổng hợp khảo sát).
+- Review lại toàn bộ Postman Collection (`EShop_Collection_v2.json`) và xác nhận đã pass 100% các kịch bản test.
+- Viết tài liệu Hướng Dẫn Sử Dụng Postman (User Guide) cho nhóm, trong đó phân tích chi tiết các "Failure Modes" của Postman đã ghi nhận từ tuần trước (lỗi ép kiểu dữ liệu ngầm định, quên set biến môi trường, và silent failure khi sai cú pháp JS).
+- Soạn thảo kịch bản và nội dung Slide thuyết trình (phần API Testing) để đóng góp vào Seminar Slides chung.
+- Chuẩn bị sẵn sàng kịch bản Demo thực tế (Live Demo) trên Postman cho buổi báo cáo.
+- Evidence: 
+  - `Toàn/User_Guide_Postman.md`
+  - `Toàn/Slides_API_Testing.md`
 
 ---
 
