@@ -64,3 +64,4 @@ Luôn kiểm tra kỹ biến môi trường và sử dụng công cụ linter/co
 - Minh họa một Bug thực tế bắt được bằng script (Ví dụ: ID chẵn trả về giá tiền kiểu chuỗi thay vì số nguyên).
 
 *(Slide này chỉ mang tính chất chuyển cảnh sang Demo, sẽ để trống hình ảnh để tập trung chiếu màn hình ứng dụng).*
+Link: https://www.canva.com/design/DAHQK9bKQdc/AY5_0kHRWUGvzPWBvhtZWg/edit
