@@ -70,4 +70,3 @@ Nếu bạn quên chọn Environment (đang ở trạng thái "No Environment"),
 Tab **Tests** trong Postman sử dụng mã JavaScript. Nếu bạn lỡ tay viết sai cú pháp (syntax error) hoặc gọi một hàm không tồn tại ở nửa đầu đoạn script, đoạn script đó sẽ bị crash. Tuy nhiên, **Postman không báo lỗi cú pháp đỏ rực lên màn hình UI**, mà nó chỉ âm thầm skip (bỏ qua) các câu lệnh `pm.test` bên dưới. Hệ quả là số lượng Test Cases trong tab "Test Results" bị giảm đi (ví dụ thay vì 5 thì chỉ hiện 2), và nếu 2 cái đó đều Pass, UI vẫn hiện màu xanh "Pass" đánh lừa người dùng rằng mọi thứ đều ổn định.
 
 ---
-*Tài liệu này được soạn thảo vào Tuần 3, nằm trong phạm vi đồ án KTPM - Seminar API & Contract Testing.*
