@@ -63,7 +63,6 @@ Mỗi request bên trong đã được lập trình sẵn kịch bản kiểm th
    - Tab **Body:** Hiển thị dữ liệu API trả về (JSON).
    - Tab **Test Results:** Hiển thị kết quả tự động kiểm tra (VD: `PASS: Status code is 200`).
 
-*Lưu ý: Script trong API Đăng nhập thành công đã được cài đặt để tự động lấy `token` từ response và lưu vào Environment variables, giúp các API cần xác thực (Cart, Checkout) phía sau có thể sử dụng ngay lập tức.*
 
 #### 3.2. Chạy tự động toàn bộ Collection (Collection Runner)
 Thay vì chạy từng API thủ công, bạn có thể chạy toàn bộ kịch bản kiểm thử bằng một click:
