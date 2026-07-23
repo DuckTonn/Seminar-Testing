@@ -27,13 +27,13 @@ Tài liệu này hướng dẫn chi tiết cách thiết lập, chạy thử ngh
 **(Phụ trách: Phạm Đức Toàn)**
 
 
-## 1. Cài đặt và Thiết lập cơ bản
+### 1. Cài đặt và Thiết lập cơ bản
 
-### 1.1. Cài đặt Postman
+#### 1.1. Cài đặt Postman
 - Truy cập [trang chủ Postman](https://www.postman.com/downloads/) và tải phiên bản phù hợp với hệ điều hành của bạn.
 - Cài đặt và đăng nhập vào tài khoản Postman (hoặc sử dụng không cần tài khoản bằng cách click "Skip and go to the app").
 
-### 1.2. Import Collection và Environment
+#### 1.2. Import Collection và Environment
 - Mở Postman, chọn **Import** ở góc trái phía trên.
 - Chọn file `EShop_Collection_v2.json` và `EShop_Environment.json` từ thư mục `Group05_06/Toàn/`.
 - Sau khi import thành công, ở thanh bên trái (Sidebar) sẽ xuất hiện collection **EShop Collection v2**.
@@ -41,7 +41,7 @@ Tài liệu này hướng dẫn chi tiết cách thiết lập, chạy thử ngh
 
 ---
 
-## 2. Cấu trúc của Collection
+### 2. Cấu trúc của Collection
 
 Collection **EShop Collection v2** được tổ chức thành 4 thư mục chính, phản ánh các chức năng cốt lõi của EShop:
 - **Authentication:** Chứa các API liên quan đến đăng nhập.
@@ -53,9 +53,9 @@ Mỗi request bên trong đã được lập trình sẵn kịch bản kiểm th
 
 ---
 
-## 3. Cách chạy kiểm thử (Thực thi Test)
+### 3. Cách chạy kiểm thử (Thực thi Test)
 
-### 3.1. Chạy một Request đơn lẻ
+#### 3.1. Chạy một Request đơn lẻ
 1. Mở thư mục chứa API bạn muốn test (VD: `Authentication`).
 2. Click chọn request `1.1 Happy Path — Đăng nhập thành công`.
 3. Nhấn nút **Send** màu xanh ở góc phải.
@@ -65,7 +65,7 @@ Mỗi request bên trong đã được lập trình sẵn kịch bản kiểm th
 
 *Lưu ý: Script trong API Đăng nhập thành công đã được cài đặt để tự động lấy `token` từ response và lưu vào Environment variables, giúp các API cần xác thực (Cart, Checkout) phía sau có thể sử dụng ngay lập tức.*
 
-### 3.2. Chạy tự động toàn bộ Collection (Collection Runner)
+#### 3.2. Chạy tự động toàn bộ Collection (Collection Runner)
 Thay vì chạy từng API thủ công, bạn có thể chạy toàn bộ kịch bản kiểm thử bằng một click:
 1. Click vào biểu tượng dấu 3 chấm `...` bên cạnh tên collection **EShop Collection v2**.
 2. Chọn **Run collection**.
