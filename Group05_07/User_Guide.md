@@ -90,7 +90,44 @@ Thay vì chạy từng API thủ công, bạn có thể chạy toàn bộ kịch
 ## 6. Hướng dẫn kiểm thử bằng Pact (Contract Testing)
 **(Phụ trách: Nguyễn Nhật Nam)**
 
-*(Nam viết hướng dẫn chạy Consumer Test để sinh Pact file, và cách chạy Provider Verification để kiểm chứng).*
+Tài liệu này hướng dẫn chi tiết cách chạy Consumer Test để sinh file hợp đồng (Pact file) và Provider Verification để kiểm chứng hợp đồng đối với hệ thống EShop.
+
+### 1. Consumer Test (Tạo Hợp Đồng)
+
+Nhiệm vụ của Consumer (Client) là định nghĩa các kỳ vọng (expectations) đối với API và sinh ra bản hợp đồng dưới dạng file JSON.
+
+**Các bước thực hiện:**
+1. **Khởi tạo cấu hình Pact:** Sử dụng `PactV3` để khai báo tên `consumer` và `provider`.
+2. **Định nghĩa Interactions:**
+   - `.given(...)`: Thiết lập trạng thái giả định (VD: "Giỏ hàng rỗng").
+   - `.uponReceiving(...)`: Đặt tên kịch bản kiểm thử.
+   - `.withRequest(...)`: Cấu hình request (Method, Path, Headers).
+   - `.willRespondWith(...)`: Định nghĩa response mong đợi. **Lưu ý:** Luôn sử dụng các Matchers (như `MatchersV3.like`) thay vì gán giá trị cứng để tránh Flaky test.
+3. **Thực thi Test:** Gửi request thực tế thông qua thư viện Axios hoặc Fetch tới Mock Server của Pact.
+4. **Kết quả:** Nếu test Pass, Pact sẽ tự động sinh/cập nhật file JSON contract vào thư mục `pacts/`.
+
+**Lệnh chạy Consumer Test:**
+```bash
+npx jest Group05_07/Nam/test/*.consumer.test.js
+```
+
+### 2. Provider Verification (Xác Minh Hợp Đồng)
+
+Nhiệm vụ của Provider (Backend) là khởi chạy server API thực tế và xác minh lại các yêu cầu từ file Contract đã được Consumer tạo ra.
+
+**Các bước thực hiện:**
+1. **Chuẩn bị Server:** Khởi động backend server trên một port test (VD: 3000) cùng database chuyên dụng cho test.
+2. **Cấu hình Verifier:** Khởi tạo `Verifier` từ thư viện `@pact-foundation/pact`.
+3. **Thiết lập thông số Verification:**
+   - `providerBaseUrl`: Trỏ tới server API đang chạy.
+   - `pactUrls`: Trỏ tới file JSON contract.
+   - **`stateHandlers` (Quan trọng nhất):** Viết các hàm logic setup/teardown dữ liệu khớp chính xác 100% với chuỗi trạng thái (`given`) mà Consumer đã định nghĩa.
+4. **Thực thi Xác minh:** Gọi hàm `verifyProvider()`. Pact sẽ đọc file contract, tự động gọi state handler tương ứng, gửi request vào server thật và so sánh kết quả.
+
+**Lệnh chạy Provider Test:**
+```bash
+npx jest Group05_07/Nam/test/provider.test.js
+```
 
 ---
 
@@ -112,4 +149,7 @@ Thay vì chạy từng API thủ công, bạn có thể chạy toàn bộ kịch
 *(Khoa liệt kê các lỗi ảo giác, code sinh sai logic của AI).*
 
 ### 8.3. Pact Failure Modes (Nam)
-*(Nam liệt kê các trường hợp verification pass nhưng thực tế schema ngầm thay đổi, v.v).*
+- **Silent Schema Change (Postel's Law):** Khác với sự chặt chẽ của Postman hay sự "hời hợt" của AI, Pact chỉ kiểm tra đúng những gì Consumer yêu cầu. Nếu Backend thêm trường dữ liệu mới (làm thay đổi ngầm luồng nghiệp vụ), Pact vẫn Pass.
+- **Phụ thuộc 100% vào Consumer Test:** Tương tự như "Thiên kiến Happy-path" của AI, nếu Consumer quên viết contract cho trường hợp báo lỗi (VD: 401 Unauthorized), thì việc Backend vô tình gỡ bỏ xác thực vẫn sẽ lọt qua mắt Pact. 
+- **Bùng nổ chi phí bảo trì (State Handlers):** Khi số lượng API tăng, việc duy trì trạng thái test (`stateHandlers`) phía Provider trở thành ác mộng. Nếu thiếu cơ chế teardown dọn dẹp data, dữ liệu rác sẽ gây xung đột, tạo ra "Flaky tests" (lỗi ngẫu nhiên), điều mà Postman hay AI ít gặp hơn trên môi trường test dùng một lần.
+- **Bỏ qua Performance:** Dù API phản hồi chậm gấp 50 lần, Pact vẫn Pass miễn là schema đúng, trái ngược với Postman có thể set timeout cứng trong script.
