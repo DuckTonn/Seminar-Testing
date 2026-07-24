@@ -192,7 +192,7 @@
       <div class="duration">API &amp; Contract Testing · Postman Track</div>
     </div>
   </div>
-  <div class="navhint">Slide 1 / 4</div>
+  <div class="navhint">Slide 1 / 9</div>
 
   <!-- SLIDE 2 : Overview features (banner + list, matches "Why this matters") -->
   <div class="slide">
@@ -239,7 +239,7 @@
     </div>
     <div class="footer">2 · Tổng quan Postman</div>
   </div>
-  <div class="navhint">Slide 2 / 4</div>
+  <div class="navhint">Slide 2 / 9</div>
 
   <!-- SLIDE 3 : Test structure & coverage (two column like Tool snapshot) -->
   <div class="slide">
@@ -289,7 +289,7 @@
     </div>
     <div class="footer">3 · Cấu trúc &amp; Coverage</div>
   </div>
-  <div class="navhint">Slide 3 / 4</div>
+  <div class="navhint">Slide 3 / 9</div>
 
   <!-- SLIDE 4 : Postman Failure Modes (table, like Activity steps) -->
   <div class="slide">
@@ -324,7 +324,7 @@
     <div class="bottom-banner"><b>Bài học:</b> Luôn kiểm tra kỹ biến môi trường và sử dụng linter / console.log trong Postman để debug script.</div>
     <div class="footer">4 · Failure Modes</div>
   </div>
-  <div class="navhint">Slide 4 / 4</div>
+  <div class="navhint">Slide 4 / 9</div>
 
   <!-- SLIDE 5 : Live Demo (table style + thank you banner) -->
   <div class="slide">
@@ -356,10 +356,157 @@
       </tbody>
     </table>
 
-    <div class="thanks-banner">Cảm ơn đã theo dõi · Sẵn sàng cho phần Q&amp;A</div>
-    <div class="footer">5 · Live Demo</div>
+    <div class="footer">5 · Live Demo Postman</div>
   </div>
-  <div class="navhint">Slide 5 / 5</div>
+  <div class="navhint">Slide 5 / 9</div>
+
+  <!-- SLIDE 6 : CI/CD Role -->
+  <div class="slide">
+    <div class="topbar"></div>
+    <div class="breadcrumb">EShop Seminar · Tuần 3 · API &amp; Contract Testing</div>
+    <div class="title">Vai trò của CI/CD trong API &amp; Contract Testing</div>
+    <div class="subtitle">Đưa việc kiểm thử vào quy trình tự động hóa liên tục nhằm phát hiện lỗi sớm.</div>
+
+    <div class="cols" style="top:170px;">
+      <div class="col">
+        <div class="banner red">Vấn đề khi chạy thủ công</div>
+        <div class="cov-item">
+          <div class="h bad">Dễ bỏ sót kiểm thử</div>
+          <div class="d">Khi code thay đổi liên tục, việc chạy test thủ công dễ bị quên hoặc bỏ qua.</div>
+        </div>
+        <div class="cov-item">
+          <div class="h bad">Không đồng bộ môi trường</div>
+          <div class="d">Việc chạy test dưới máy cá nhân phụ thuộc vào cấu hình riêng, dễ phát sinh lỗi môi trường cục bộ.</div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="banner green">Giải pháp từ CI/CD (GitHub Actions)</div>
+        <div class="cov-item">
+          <div class="h ok">Tự động kích hoạt (Trigger)</div>
+          <div class="d">Tự động chạy lại toàn bộ test suite (Newman v2 &amp; Pact) ngay khi push code hoặc tạo Pull Request.</div>
+        </div>
+        <div class="cov-item">
+          <div class="h ok">Chốt chặn chất lượng (Quality Gate)</div>
+          <div class="d">Ngăn chặn gộp code lỗi hoặc phá vỡ hợp đồng (breaking changes) vào nhánh main trước khi deploy.</div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">6 · Vai trò CI/CD</div>
+  </div>
+  <div class="navhint">Slide 6 / 9</div>
+
+  <!-- SLIDE 7 : Pipeline Design -->
+  <div class="slide">
+    <div class="topbar"></div>
+    <div class="breadcrumb">EShop Seminar · Tuần 3 · API &amp; Contract Testing</div>
+    <div class="title">Thiết kế Pipeline trên GitHub Actions</div>
+    <div class="subtitle">Quy trình thực thi tự động tuần tự của job <code>test-api</code>.</div>
+
+    <div class="cols" style="top:170px;">
+      <div class="col">
+        <div class="banner">1. Sinh hợp đồng &amp; Khởi chạy</div>
+        <div class="flow-row">
+          <div class="flow-num">1</div>
+          <div class="flow-body"><b>Pact Consumer Tests</b><br><span class="flow-path">Chạy consumer tests sinh ra file contract JSON mới nhất.</span></div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-num">2</div>
+          <div class="flow-body"><b>Khởi động Backend Server</b><br><span class="flow-path">Chạy server ngầm trên môi trường CI (cổng 3000).</span></div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-num">3</div>
+          <div class="flow-body"><b>Wait for Server Ready</b><br><span class="flow-path">Dùng wait-on thăm dò để đảm bảo backend đã sẵn sàng.</span></div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="banner blue">2. Quét lỗi &amp; Đối chứng</div>
+        <div class="flow-row">
+          <div class="flow-num">4</div>
+          <div class="flow-body"><b>Newman API Testing</b><br><span class="flow-path">Chạy bộ test API v2 quét toàn bộ 5 endpoints của EShop.</span></div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-num">5</div>
+          <div class="flow-body"><b>Pact Provider Verification</b><br><span class="flow-path">Đối chứng backend thực tế với các cam kết trong hợp đồng JSON.</span></div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-num">6</div>
+          <div class="flow-body"><b>Upload Artifacts</b><br><span class="flow-path">Đóng gói và tải toàn bộ HTML/TXT reports lên GitHub.</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">7 · Thiết kế Pipeline</div>
+  </div>
+  <div class="navhint">Slide 7 / 9</div>
+
+  <!-- SLIDE 8 : Automated Reports -->
+  <div class="slide">
+    <div class="topbar"></div>
+    <div class="breadcrumb">EShop Seminar · Tuần 3 · API &amp; Contract Testing</div>
+    <div class="title">Báo cáo kiểm thử &amp; Quản lý Artifacts</div>
+    <div class="subtitle">Đảm bảo việc lưu trữ minh chứng kiểm thử trực quan và dễ tiếp cận.</div>
+
+    <table class="tbl" style="top:170px;">
+      <thead>
+        <tr>
+          <th style="width:250px;">Báo cáo / Minh chứng</th>
+          <th>Chi tiết định dạng &amp; Nội dung</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="key">Newman HTML Report</td>
+          <td>Sử dụng plugin <code>htmlextra</code> xuất báo cáo dạng HTML trực quan, chi tiết từng request, body response và assertion pass/fail.</td>
+        </tr>
+        <tr>
+          <td class="key">Pact Verification Logs</td>
+          <td>Ghi đè log đối sánh hợp đồng ra tệp tin văn bản <code>pact-verification-report.txt</code> phục vụ việc debug lỗi vi phạm hợp đồng (mismatch).</td>
+        </tr>
+        <tr>
+          <td class="key">GitHub Artifacts</td>
+          <td>Gom toàn bộ báo cáo vào thư mục <code>reports/</code> và tải lên GitHub Actions dưới dạng tệp nén <code>EShop-Test-Reports.zip</code>.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="bottom-banner"><b>Lưu ý:</b> Cấu hình bước xuất báo cáo với thuộc tính <code>if: always()</code> để đảm bảo luôn thu thập được log kể cả khi test fail.</div>
+    <div class="footer">8 · Báo cáo &amp; Artifacts</div>
+  </div>
+  <div class="navhint">Slide 8 / 9</div>
+
+  <!-- SLIDE 9 : Live Demo CI/CD -->
+  <div class="slide">
+    <div class="topbar"></div>
+    <div class="breadcrumb">EShop Seminar · Tuần 3 · API &amp; Contract Testing</div>
+    <div class="title">Demo tự động hóa kiểm thử (CI/CD)</div>
+    <div class="subtitle">Live Demo · ~3 phút</div>
+
+    <table class="tbl" style="top:170px;">
+      <thead>
+        <tr>
+          <th style="width:210px;">Bước demo</th>
+          <th>Nội dung thực hiện</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="key">1. Tạo Pull Request</td>
+          <td>Push thay đổi code/test lên nhánh phụ và tạo PR để kích hoạt workflow tự động chạy.</td>
+        </tr>
+        <tr>
+          <td class="key">2. Quan sát Job log</td>
+          <td>Theo dõi các bước chạy tuần tự trên giao diện GitHub Actions log.</td>
+        </tr>
+        <tr>
+          <td class="key">3. Đọc báo cáo lỗi</td>
+          <td>Tải gói Artifacts <code>EShop-Test-Reports</code> về máy cá nhân, giải nén và kiểm tra báo cáo HTML / TXT log.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="thanks-banner">Cảm ơn đã theo dõi · Sẵn sàng cho phần Q&amp;A</div>
+    <div class="footer">9 · Live Demo CI/CD</div>
+  </div>
+  <div class="navhint">Slide 9 / 9</div>
 
 </div>
 </body>
