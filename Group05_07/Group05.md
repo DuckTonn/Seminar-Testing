@@ -33,7 +33,6 @@
 
 
 ---
-## Link Canva Slide: https://www.canva.com/design/DAHQK9bKQdc/AY5_0kHRWUGvzPWBvhtZWg/edit
 
 ## Link Video Demo:
 
