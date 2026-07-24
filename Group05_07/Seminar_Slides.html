@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <title>API Testing bằng Postman — EShop Seminar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
 <style>
   :root{
     --navy:#1F4E79;
@@ -17,7 +20,7 @@
   *{box-sizing:border-box;}
   html,body{
     margin:0; padding:0; background:#5b6673;
-    font-family:Arial, "Helvetica Neue", sans-serif;
+    font-family:'Inter', Arial, "Helvetica Neue", sans-serif;
     color:var(--ink);
   }
   .deck{
@@ -121,6 +124,7 @@
   .pill.get{ background:#375623; }
   .pill.post{ background:var(--red); }
   .flow-path{ font-family:"Courier New", monospace; font-size:13px; color:#444; }
+  .flow-desc{ font-size:14px; color:#444; line-height:1.4; display:inline-block; margin-top:4px; }
   .cov-item{
     background:var(--gray); border-radius:3px; padding:14px 16px; margin-bottom:14px;
     box-shadow:0 1px 3px rgba(0,0,0,.15);
@@ -192,7 +196,7 @@
       <div class="duration">API &amp; Contract Testing · Postman Track</div>
     </div>
   </div>
-  <div class="navhint">Slide 1 / 9</div>
+  <div class="navhint">Slide 1 / 14</div>
 
   <!-- SLIDE 2 : Overview features (banner + list, matches "Why this matters") -->
   <div class="slide">
@@ -206,19 +210,19 @@
         <div class="banner">Áp dụng cho EShop</div>
         <div class="flow-row">
           <div class="flow-num">1</div>
-          <div class="flow-body"><b>Import OpenAPI/Swagger</b><br><span class="flow-path">Chuyển spec thành collection ngay lập tức</span></div>
+          <div class="flow-body"><b>Import OpenAPI/Swagger</b><br><span class="flow-desc">Chuyển spec thành collection ngay lập tức</span></div>
         </div>
         <div class="flow-row">
           <div class="flow-num">2</div>
-          <div class="flow-body"><b>Environment &amp; Auth Variables</b><br><span class="flow-path">Quản lý biến môi trường linh hoạt</span></div>
+          <div class="flow-body"><b>Environment &amp; Auth Variables</b><br><span class="flow-desc">Quản lý biến môi trường linh hoạt</span></div>
         </div>
         <div class="flow-row">
           <div class="flow-num">3</div>
-          <div class="flow-body"><b>Test Scripts (JavaScript)</b><br><span class="flow-path">Viết kịch bản kiểm thử ngay trong app</span></div>
+          <div class="flow-body"><b>Test Scripts (JavaScript)</b><br><span class="flow-desc">Viết kịch bản kiểm thử ngay trong app</span></div>
         </div>
         <div class="flow-row">
           <div class="flow-num">4</div>
-          <div class="flow-body"><b>Collection Runner + Newman</b><br><span class="flow-path">Chạy hàng loạt, tích hợp CI/CD</span></div>
+          <div class="flow-body"><b>Collection Runner + Newman</b><br><span class="flow-desc">Chạy hàng loạt, tích hợp CI/CD</span></div>
         </div>
       </div>
       <div class="col">
@@ -239,7 +243,7 @@
     </div>
     <div class="footer">2 · Tổng quan Postman</div>
   </div>
-  <div class="navhint">Slide 2 / 9</div>
+  <div class="navhint">Slide 2 / 14</div>
 
   <!-- SLIDE 3 : Test structure & coverage (two column like Tool snapshot) -->
   <div class="slide">
@@ -289,7 +293,7 @@
     </div>
     <div class="footer">3 · Cấu trúc &amp; Coverage</div>
   </div>
-  <div class="navhint">Slide 3 / 9</div>
+  <div class="navhint">Slide 3 / 14</div>
 
   <!-- SLIDE 4 : Postman Failure Modes (table, like Activity steps) -->
   <div class="slide">
@@ -324,7 +328,7 @@
     <div class="bottom-banner"><b>Bài học:</b> Luôn kiểm tra kỹ biến môi trường và sử dụng linter / console.log trong Postman để debug script.</div>
     <div class="footer">4 · Failure Modes</div>
   </div>
-  <div class="navhint">Slide 4 / 9</div>
+  <div class="navhint">Slide 4 / 14</div>
 
   <!-- SLIDE 5 : Live Demo (table style + thank you banner) -->
   <div class="slide">
@@ -358,7 +362,183 @@
 
     <div class="footer">5 · Live Demo Postman</div>
   </div>
-  <div class="navhint">Slide 5 / 9</div>
+  <div class="navhint">Slide 5 / 14</div>
+
+  <!-- PACT SLIDE 1 : COVER -->
+  <div class="slide cover">
+    <div class="cover-side">
+      <div class="tag">T3</div>
+      <div class="sub">Seminar Nhóm<br>EShop Project</div>
+      <div class="foot">API &amp; Contract Testing · Tuần 3</div>
+    </div>
+    <div class="cover-main">
+      <div class="eyebrow">FIT @ HCMUS · EShop — API &amp; Contract Testing</div>
+      <h1>Tại sao chọn Pact<br>cho Contract Testing?</h1>
+      <div class="desc">Kiểm thử giao tiếp giữa các dịch vụ một cách độc lập, nhanh chóng và an toàn mà không cần tích hợp toàn bộ hệ thống.</div>
+      <div class="activity">NGƯỜI TRÌNH BÀY: NGUYỄN NHẬT NAM</div>
+      <div class="duration">API &amp; Contract Testing · Pact Track</div>
+    </div>
+  </div>
+  <div class="navhint">Slide 6 / 14</div>
+
+  <!-- SLIDE 2 : Contract Testing vs Integration Testing -->
+  <div class="slide">
+    <div class="topbar"></div>
+    <div class="breadcrumb">EShop Seminar · Tuần 3 · API &amp; Contract Testing</div>
+    <div class="title">Integration Testing vs Contract Testing</div>
+    <div class="subtitle">Hiểu rõ vấn đề của Integration Test truyền thống và cách Contract Test (Pact) giải quyết.</div>
+
+    <div class="cols" style="top:170px;">
+      <div class="col">
+        <div class="banner red">Integration Testing (E2E)</div>
+        <div class="cov-item">
+          <div class="h bad">Phức tạp &amp; Chậm chạp</div>
+          <div class="d">Cần môi trường thực (Database, APIs khác) chạy cùng lúc. Dễ xảy ra lỗi Flaky (chập chờn).</div>
+        </div>
+        <div class="cov-item">
+          <div class="h bad">Tốn chi phí bảo trì</div>
+          <div class="d">Khi một service thay đổi, toàn bộ chuỗi test có thể thất bại, rất khó debug lỗi nằm ở đâu.</div>
+        </div>
+        <div class="cov-item">
+          <div class="h warn">Phản hồi chậm</div>
+          <div class="d">Developer phải đợi CI/CD chạy xong toàn bộ hệ thống mới biết code mình có làm hỏng gì không.</div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="banner green">Contract Testing (với Pact)</div>
+        <div class="cov-item">
+          <div class="h ok">Nhanh &amp; Độc lập</div>
+          <div class="d">Consumer và Provider được test tách biệt thông qua "Bản hợp đồng" (Pact file). Không cần deploy cả 2.</div>
+        </div>
+        <div class="cov-item">
+          <div class="h ok">Phát hiện lỗi sớm</div>
+          <div class="d">Biết ngay lập tức nếu API thay đổi làm vỡ logic phía FE/Consumer ngay tại máy local.</div>
+        </div>
+        <div class="cov-item">
+          <div class="h ok">Tập trung vào giao tiếp</div>
+          <div class="d">Chỉ kiểm tra định dạng dữ liệu (Request/Response) truyền qua lại, bỏ qua logic nghiệp vụ rườm rà.</div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">12 · Integration vs Contract Testing</div>
+  </div>
+  <div class="navhint">Slide 7 / 14</div>
+
+  <!-- SLIDE 3 : Consumer-Driven Contract (CDC) -->
+  <div class="slide">
+    <div class="topbar"></div>
+    <div class="breadcrumb">EShop Seminar · Tuần 3 · API &amp; Contract Testing</div>
+    <div class="title">Cách Pact hoạt động: Consumer-Driven</div>
+    <div class="subtitle">Quy trình hướng Người tiêu dùng (Consumer-Driven Contract). Mọi thay đổi nên xuất phát từ nhu cầu của FE/Client.</div>
+
+    <div class="cols">
+      <div class="col">
+        <div class="banner">Giai đoạn 1: Consumer (Ví dụ: Web UI)</div>
+        <div class="flow-row">
+          <div class="flow-num">1</div>
+          <div class="flow-body"><b>Viết Unit Test</b><br><span class="flow-desc">Định nghĩa mong đợi (Expectation) về Request và Response</span></div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-num">2</div>
+          <div class="flow-body"><b>Chạy Test &amp; Tạo Mock</b><br><span class="flow-desc">Pact tạo Mock Server trả về dữ liệu ảo cho FE</span></div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-num">3</div>
+          <div class="flow-body"><b>Sinh ra Contract (Pact File)</b><br><span class="flow-desc">File JSON chứa toàn bộ quy tắc giao tiếp</span></div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="banner blue">Giai đoạn 2: Provider (Ví dụ: Order API)</div>
+        <div class="flow-row">
+          <div class="flow-num">4</div>
+          <div class="flow-body"><b>Nhận Contract</b><br><span class="flow-desc">Provider lấy file JSON (từ Broker hoặc File System)</span></div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-num">5</div>
+          <div class="flow-body"><b>Pact Replay</b><br><span class="flow-desc">Pact giả lập Consumer gửi Request thực tới Provider</span></div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-num">6</div>
+          <div class="flow-body"><b>Xác thực &amp; So sánh</b><br><span class="flow-desc">Kiểm tra Response có khớp với hợp đồng hay không</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">13 · Consumer-Driven Contract (CDC)</div>
+  </div>
+  <div class="navhint">Slide 8 / 14</div>
+
+  <!-- SLIDE 4 : Pact Failure Modes (table) -->
+  <div class="slide">
+    <div class="topbar"></div>
+    <div class="breadcrumb">EShop Seminar · Tuần 3 · API &amp; Contract Testing</div>
+    <div class="title red">Lưu ý khi sử dụng Pact (Best Practices)</div>
+    <div class="subtitle">Những điểm cần tránh để Contract Testing mang lại hiệu quả cao nhất.</div>
+
+    <table class="tbl" style="top:170px;">
+      <thead>
+        <tr>
+          <th class="red" style="width:230px;">Anti-pattern (Nên tránh)</th>
+          <th class="red">Giải thích &amp; Cách khắc phục</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="key">Dùng Pact cho Functional Test</td>
+          <td>Pact <b>không</b> dùng để test logic nghiệp vụ. Chỉ test định dạng dữ liệu, status code, headers. Đừng nhồi nhét mọi Test Case vào Pact.</td>
+        </tr>
+        <tr>
+          <td class="key">Bỏ qua Provider States</td>
+          <td>Thiếu trạng thái ban đầu khiến Provider test hay thất bại. VD: Request thông tin User nhưng DB chưa có User đó. <b>Giải pháp:</b> Định nghĩa rõ Provider State trong Contract.</td>
+        </tr>
+        <tr>
+          <td class="key">Public API chưa xác định Client</td>
+          <td>Pact tốt nhất cho nội bộ (Microservices, FE-BE chung công ty). Nếu build Public API cho bên thứ 3 vô danh, dùng OpenAPI/Swagger Testing thì phù hợp hơn.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="bottom-banner"><b>Ghi nhớ:</b> Contract Testing nằm giữa Unit Test và E2E Test. Hãy tối ưu để tăng tốc độ phát triển và CI/CD.</div>
+    <div class="footer">14 · Lưu ý khi dùng Pact</div>
+  </div>
+  <div class="navhint">Slide 9 / 14</div>
+
+  <!-- SLIDE 5 : Live Demo (table style + thank you banner) -->
+  <div class="slide">
+    <div class="topbar"></div>
+    <div class="breadcrumb">EShop Seminar · Tuần 3 · API &amp; Contract Testing</div>
+    <div class="title">Demo Contract Testing với Pact</div>
+    <div class="subtitle">Live Demo · ~5 phút</div>
+
+    <table class="tbl" style="top:170px;">
+      <thead>
+        <tr>
+          <th style="width:210px;">Bước</th>
+          <th>Nội dung</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="key">1. Consumer Test</td>
+          <td>Chạy Unit Test phía Web UI, mock API <code>GET /api/products</code> và sinh ra file <code>web-ui-product-api.json</code>.</td>
+        </tr>
+        <tr>
+          <td class="key">2. Chia sẻ Contract</td>
+          <td>Upload file Contract lên thư mục dùng chung hoặc hệ thống quản lý Pact Broker.</td>
+        </tr>
+        <tr>
+          <td class="key">3. Provider Verification</td>
+          <td>Phía Backend (Product API) kéo Contract về và chạy Verification Test đối chiếu.</td>
+        </tr>
+        <tr>
+          <td class="key">4. Break the Contract!</td>
+          <td>Thử đổi tên field <code>price</code> thành <code>product_price</code> ở Backend, chạy lại test để thấy Provider Verification báo lỗi do vi phạm hợp đồng.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="footer">10 · Live Demo Contract Testing</div>
+  </div>
+  <div class="navhint">Slide 10 / 14</div>
 
   <!-- SLIDE 6 : CI/CD Role -->
   <div class="slide">
@@ -391,9 +571,9 @@
         </div>
       </div>
     </div>
-    <div class="footer">6 · Vai trò CI/CD</div>
+    <div class="footer">11 · Vai trò CI/CD</div>
   </div>
-  <div class="navhint">Slide 6 / 9</div>
+  <div class="navhint">Slide 11 / 14</div>
 
   <!-- SLIDE 7 : Pipeline Design -->
   <div class="slide">
@@ -407,36 +587,36 @@
         <div class="banner">1. Sinh hợp đồng &amp; Khởi chạy</div>
         <div class="flow-row">
           <div class="flow-num">1</div>
-          <div class="flow-body"><b>Pact Consumer Tests</b><br><span class="flow-path">Chạy consumer tests sinh ra file contract JSON mới nhất.</span></div>
+          <div class="flow-body"><b>Pact Consumer Tests</b><br><span class="flow-desc">Chạy consumer tests sinh ra file contract JSON mới nhất.</span></div>
         </div>
         <div class="flow-row">
           <div class="flow-num">2</div>
-          <div class="flow-body"><b>Khởi động Backend Server</b><br><span class="flow-path">Chạy server ngầm trên môi trường CI (cổng 3000).</span></div>
+          <div class="flow-body"><b>Khởi động Backend Server</b><br><span class="flow-desc">Chạy server ngầm trên môi trường CI (cổng 3000).</span></div>
         </div>
         <div class="flow-row">
           <div class="flow-num">3</div>
-          <div class="flow-body"><b>Wait for Server Ready</b><br><span class="flow-path">Dùng wait-on thăm dò để đảm bảo backend đã sẵn sàng.</span></div>
+          <div class="flow-body"><b>Wait for Server Ready</b><br><span class="flow-desc">Dùng wait-on thăm dò để đảm bảo backend đã sẵn sàng.</span></div>
         </div>
       </div>
       <div class="col">
         <div class="banner blue">2. Quét lỗi &amp; Đối chứng</div>
         <div class="flow-row">
           <div class="flow-num">4</div>
-          <div class="flow-body"><b>Newman API Testing</b><br><span class="flow-path">Chạy bộ test API v2 quét toàn bộ 5 endpoints của EShop.</span></div>
+          <div class="flow-body"><b>Newman API Testing</b><br><span class="flow-desc">Chạy bộ test API v2 quét toàn bộ 5 endpoints của EShop.</span></div>
         </div>
         <div class="flow-row">
           <div class="flow-num">5</div>
-          <div class="flow-body"><b>Pact Provider Verification</b><br><span class="flow-path">Đối chứng backend thực tế với các cam kết trong hợp đồng JSON.</span></div>
+          <div class="flow-body"><b>Pact Provider Verification</b><br><span class="flow-desc">Đối chứng backend thực tế với các cam kết trong hợp đồng JSON.</span></div>
         </div>
         <div class="flow-row">
           <div class="flow-num">6</div>
-          <div class="flow-body"><b>Upload Artifacts</b><br><span class="flow-path">Đóng gói và tải toàn bộ HTML/TXT reports lên GitHub.</span></div>
+          <div class="flow-body"><b>Upload Artifacts</b><br><span class="flow-desc">Đóng gói và tải toàn bộ HTML/TXT reports lên GitHub.</span></div>
         </div>
       </div>
     </div>
-    <div class="footer">7 · Thiết kế Pipeline</div>
+    <div class="footer">12 · Thiết kế Pipeline</div>
   </div>
-  <div class="navhint">Slide 7 / 9</div>
+  <div class="navhint">Slide 12 / 14</div>
 
   <!-- SLIDE 8 : Automated Reports -->
   <div class="slide">
@@ -469,9 +649,9 @@
     </table>
 
     <div class="bottom-banner"><b>Lưu ý:</b> Cấu hình bước xuất báo cáo với thuộc tính <code>if: always()</code> để đảm bảo luôn thu thập được log kể cả khi test fail.</div>
-    <div class="footer">8 · Báo cáo &amp; Artifacts</div>
+    <div class="footer">13 · Báo cáo &amp; Artifacts</div>
   </div>
-  <div class="navhint">Slide 8 / 9</div>
+  <div class="navhint">Slide 13 / 14</div>
 
   <!-- SLIDE 9 : Live Demo CI/CD -->
   <div class="slide">
@@ -504,9 +684,9 @@
     </table>
 
     <div class="thanks-banner">Cảm ơn đã theo dõi · Sẵn sàng cho phần Q&amp;A</div>
-    <div class="footer">9 · Live Demo CI/CD</div>
+    <div class="footer">14 · Live Demo CI/CD</div>
   </div>
-  <div class="navhint">Slide 9 / 9</div>
+  <div class="navhint">Slide 14 / 14</div>
 
 </div>
 </body>
