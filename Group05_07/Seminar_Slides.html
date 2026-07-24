@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>API Testing bằng Postman — EShop Seminar</title>
+<style>
+  :root{
+    --navy:#1F4E79;
+    --ink:#202020;
+    --blue:#2E75B6;
+    --red:#C00000;
+    --green:#375623;
+    --lav:#D9E1F2;
+    --gray:#F2F2F2;
+    --white:#FFFFFF;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; padding:0; background:#5b6673;
+    font-family:Arial, "Helvetica Neue", sans-serif;
+    color:var(--ink);
+  }
+  .deck{
+    display:flex; flex-direction:column; align-items:center;
+    gap:28px; padding:36px 0 60px;
+  }
+  .slide{
+    width:1280px; height:720px;
+    background:var(--white);
+    position:relative;
+    overflow:hidden;
+    box-shadow:0 10px 30px rgba(0,0,0,.35);
+    flex-shrink:0;
+  }
+  /* ---------- shared chrome ---------- */
+  .topbar{
+    position:absolute; top:0; left:0; right:0; height:14px;
+    background:var(--navy);
+  }
+  .breadcrumb{
+    position:absolute; top:22px; left:52px; right:52px;
+    font-size:14px; font-weight:bold; color:var(--navy);
+  }
+  .title{
+    position:absolute; left:52px; right:52px; top:56px;
+    font-size:38px; font-weight:800; color:var(--navy);
+    line-height:1.15;
+  }
+  .title.red{ color:var(--red); }
+  .footer{
+    position:absolute; bottom:0; left:0; right:0; height:34px;
+    background:var(--navy); color:var(--white);
+    font-size:12px; font-weight:bold;
+    display:flex; align-items:center; padding-left:20px;
+  }
+  /* ---------- title slide ---------- */
+  .slide.cover{ display:flex; }
+  .cover-side{
+    width:34%; height:100%; background:var(--navy); color:var(--white);
+    padding:40px 34px; position:relative;
+  }
+  .cover-side .tag{
+    font-size:66px; font-weight:900; margin-top:70px; line-height:1;
+  }
+  .cover-side .sub{
+    margin-top:26px; font-size:20px; line-height:1.3; font-weight:400;
+  }
+  .cover-side .foot{
+    position:absolute; bottom:34px; left:34px; right:34px;
+    font-size:12px; font-style:italic; opacity:.85;
+  }
+  .cover-main{
+    flex:1; padding:56px 60px; position:relative;
+  }
+  .cover-main .eyebrow{
+    font-size:15px; font-style:italic; color:var(--blue); font-weight:bold;
+  }
+  .cover-main h1{
+    font-size:38px; color:var(--navy); margin:26px 0 0; font-weight:800; line-height:1.2;
+  }
+  .cover-main .desc{
+    margin-top:34px; font-size:18px; font-style:italic; color:var(--ink); line-height:1.4; max-width:640px;
+  }
+  .cover-main .activity{
+    margin-top:60px; background:var(--lav); color:var(--navy);
+    font-weight:800; font-size:20px; text-align:center;
+    padding:20px; border-radius:2px;
+  }
+  .cover-main .duration{
+    margin-top:16px; font-size:14px; color:var(--ink);
+  }
+  /* ---------- banner (section header bar) ---------- */
+  .banner{
+    background:var(--navy); color:var(--white); font-weight:800;
+    font-size:17px; text-align:center; padding:12px 10px;
+    border-radius:2px; box-shadow:1px 2px 4px rgba(0,0,0,.25);
+  }
+  .banner.blue{ background:var(--blue); }
+  .banner.red{ background:var(--red); }
+  .banner.green{ background:var(--green); }
+  /* ---------- two-column layout (slide 2) ---------- */
+  .cols{
+    position:absolute; top:150px; left:52px; right:52px; bottom:64px;
+    display:flex; gap:36px;
+  }
+  .col{ flex:1; display:flex; flex-direction:column; }
+  .col .banner{ margin-bottom:16px; }
+  .flow-row{
+    display:flex; align-items:flex-start; gap:14px; margin-bottom:16px;
+  }
+  .flow-num{
+    width:30px; height:30px; border-radius:50%; background:var(--navy);
+    color:#fff; font-weight:800; font-size:13px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .flow-body b{ font-size:15px; color:var(--ink); }
+  .pill{
+    display:inline-block; font-size:10px; font-weight:800; color:#fff;
+    padding:2px 8px; border-radius:3px; margin-right:8px; vertical-align:middle;
+  }
+  .pill.get{ background:#375623; }
+  .pill.post{ background:var(--red); }
+  .flow-path{ font-family:"Courier New", monospace; font-size:13px; color:#444; }
+  .cov-item{
+    background:var(--gray); border-radius:3px; padding:14px 16px; margin-bottom:14px;
+    box-shadow:0 1px 3px rgba(0,0,0,.15);
+  }
+  .cov-item .h{ font-weight:800; font-size:15px; margin-bottom:6px; }
+  .cov-item .h.ok{ color:var(--green); }
+  .cov-item .h.bad{ color:var(--red); }
+  .cov-item .h.warn{ color:#B8860B; }
+  .cov-item .d{ font-size:13px; line-height:1.4; color:#333; }
+  /* ---------- table style (slides 3 & 4) ---------- */
+  .tbl{
+    position:absolute; top:150px; left:52px; right:52px;
+    border-collapse:collapse; width:1176px;
+  }
+  .tbl thead th{
+    background:var(--navy); color:#fff; font-size:15px; text-align:left;
+    padding:12px 18px; box-shadow:0 2px 4px rgba(0,0,0,.2);
+  }
+  .tbl thead th.red{ background:var(--red); }
+  .tbl tbody td{
+    padding:16px 18px; font-size:14.5px; vertical-align:top; line-height:1.4;
+  }
+  .tbl tbody tr:nth-child(odd){ background:var(--lav); }
+  .tbl tbody tr:nth-child(even){ background:var(--gray); }
+  .tbl td.key{ font-weight:800; color:var(--navy); white-space:nowrap; width:210px; }
+  .subtitle{
+    position:absolute; left:52px; top:104px; right:52px;
+    font-size:15px; color:#444;
+  }
+  .bottom-banner{
+    position:absolute; left:52px; right:52px; bottom:70px;
+    background:var(--navy); color:#fff; border-radius:3px;
+    padding:18px 24px; font-size:15px; line-height:1.4;
+    box-shadow:0 2px 6px rgba(0,0,0,.25);
+  }
+  .bottom-banner b{ color:#8FD4C9; }
+  .thanks-banner{
+    position:absolute; left:52px; right:52px; bottom:64px;
+    background:var(--red); color:#fff; text-align:center;
+    font-weight:800; font-size:18px; padding:18px; border-radius:3px;
+    box-shadow:0 2px 6px rgba(0,0,0,.25);
+  }
+  /* page nav (screen-only) */
+  .navhint{
+    color:#c9d2dd; font-size:13px; text-align:center; margin-top:-8px;
+  }
+  @media print{
+    body{ background:#fff; }
+    .slide{ box-shadow:none; margin:0; page-break-after:always; }
+    .navhint{ display:none; }
+  }
+</style>
+</head>
+<body>
+<div class="deck">
+
+  <!-- SLIDE 1 : COVER -->
+  <div class="slide cover">
+    <div class="cover-side">
+      <div class="tag">T3</div>
+      <div class="sub">Seminar Nhóm<br>EShop Project</div>
+      <div class="foot">API &amp; Contract Testing · Tuần 3</div>
+    </div>
+    <div class="cover-main">
+      <div class="eyebrow">FIT @ HCMUS · EShop — API &amp; Contract Testing</div>
+      <h1>Tại sao chọn Postman<br>cho API Testing?</h1>
+      <div class="desc">Công cụ trung tâm cho kiểm thử API trong dự án EShop — trực quan, có thể lập trình, và sẵn sàng cho CI/CD.</div>
+      <div class="activity">NGƯỜI TRÌNH BÀY: PHẠM ĐỨC TOÀN</div>
+      <div class="duration">API &amp; Contract Testing · Postman Track</div>
+    </div>
+  </div>
+  <div class="navhint">Slide 1 / 4</div>
+
+  <!-- SLIDE 2 : Overview features (banner + list, matches "Why this matters") -->
+  <div class="slide">
+    <div class="topbar"></div>
+    <div class="breadcrumb">EShop Seminar · Tuần 3 · API &amp; Contract Testing</div>
+    <div class="title">Tính năng nổi bật của Postman</div>
+    <div class="subtitle">Postman là công cụ phổ biến nhất hiện nay cho phát triển &amp; kiểm thử API — giao diện trực quan cho cả Developer và QA.</div>
+
+    <div class="cols" style="top:170px;">
+      <div class="col">
+        <div class="banner">Áp dụng cho EShop</div>
+        <div class="flow-row">
+          <div class="flow-num">1</div>
+          <div class="flow-body"><b>Import OpenAPI/Swagger</b><br><span class="flow-path">Chuyển spec thành collection ngay lập tức</span></div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-num">2</div>
+          <div class="flow-body"><b>Environment &amp; Auth Variables</b><br><span class="flow-path">Quản lý biến môi trường linh hoạt</span></div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-num">3</div>
+          <div class="flow-body"><b>Test Scripts (JavaScript)</b><br><span class="flow-path">Viết kịch bản kiểm thử ngay trong app</span></div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-num">4</div>
+          <div class="flow-body"><b>Collection Runner + Newman</b><br><span class="flow-path">Chạy hàng loạt, tích hợp CI/CD</span></div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="banner blue">Vì sao QA &amp; Dev cùng dùng được</div>
+        <div class="cov-item">
+          <div class="h ok">Giao diện trực quan (UI)</div>
+          <div class="d">Dễ tiếp cận cho cả người mới lẫn Developer có kinh nghiệm, không cần viết code để bắt đầu.</div>
+        </div>
+        <div class="cov-item">
+          <div class="h ok">Có thể lập trình được</div>
+          <div class="d">Test Script bằng JavaScript giúp kiểm tra logic nghiệp vụ sâu hơn ngoài status code.</div>
+        </div>
+        <div class="cov-item">
+          <div class="h ok">Sẵn sàng CI/CD</div>
+          <div class="d">Newman cho phép chạy Collection tự động trong pipeline, không cần mở UI thủ công.</div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">2 · Tổng quan Postman</div>
+  </div>
+  <div class="navhint">Slide 2 / 4</div>
+
+  <!-- SLIDE 3 : Test structure & coverage (two column like Tool snapshot) -->
+  <div class="slide">
+    <div class="topbar"></div>
+    <div class="breadcrumb">EShop Seminar · Tuần 3 · API &amp; Contract Testing</div>
+    <div class="title">Cấu trúc bộ Test &amp; Phạm vi bao phủ</div>
+
+    <div class="cols">
+      <div class="col">
+        <div class="banner">5 luồng API cốt lõi</div>
+        <div class="flow-row">
+          <div class="flow-num">1</div>
+          <div class="flow-body"><b>Authentication</b><br><span class="pill post">POST</span><span class="flow-path">/api/login</span></div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-num">2</div>
+          <div class="flow-body"><b>Product Listing</b><br><span class="pill get">GET</span><span class="flow-path">/api/products</span></div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-num">3</div>
+          <div class="flow-body"><b>Product Details</b><br><span class="pill get">GET</span><span class="flow-path">/api/products/:id</span></div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-num">4</div>
+          <div class="flow-body"><b>Cart Management</b><br><span class="pill post">POST</span><span class="flow-path">/api/cart</span></div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-num">5</div>
+          <div class="flow-body"><b>Order Checkout</b><br><span class="pill post">POST</span><span class="flow-path">/api/checkout</span></div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="banner red">Độ bao phủ Test Cases</div>
+        <div class="cov-item">
+          <div class="h ok">✓ Happy Path</div>
+          <div class="d">Đảm bảo luồng xử lý thành công đúng nghiệp vụ (Status 200, schema chuẩn).</div>
+        </div>
+        <div class="cov-item">
+          <div class="h bad">✗ Negative Path</div>
+          <div class="d">Bắt lỗi các trường hợp token hết hạn, sai mật khẩu, tài khoản bị khóa.</div>
+        </div>
+        <div class="cov-item">
+          <div class="h warn">⚠ Edge Cases</div>
+          <div class="d">Xử lý các tình huống dị biệt: body rỗng, quantity âm, ID không hợp lệ.</div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">3 · Cấu trúc &amp; Coverage</div>
+  </div>
+  <div class="navhint">Slide 3 / 4</div>
+
+  <!-- SLIDE 4 : Postman Failure Modes (table, like Activity steps) -->
+  <div class="slide">
+    <div class="topbar"></div>
+    <div class="breadcrumb">EShop Seminar · Tuần 3 · API &amp; Contract Testing</div>
+    <div class="title red">Postman Failure Modes — điểm mù của tool</div>
+    <div class="subtitle">Các lỗi thường gặp do công cụ, dễ gây hiểu lầm cho người test.</div>
+
+    <table class="tbl" style="top:170px;">
+      <thead>
+        <tr>
+          <th class="red" style="width:210px;">Failure mode</th>
+          <th class="red">Mô tả</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="key">Sai kiểu dữ liệu</td>
+          <td>API trả về String, nhưng logic test yêu cầu Number. Báo lỗi mơ hồ khiến QA lầm tưởng API sai nghiệp vụ.</td>
+        </tr>
+        <tr>
+          <td class="key">Quên chọn Environment</td>
+          <td>Gửi URL hoặc Token chứa chuỗi chưa được parse (VD: <code>{{baseUrl}}</code>), dẫn đến API sập nhưng mất thời gian debug sai hướng.</td>
+        </tr>
+        <tr>
+          <td class="key">Silent Failure trong Script</td>
+          <td>Viết sai cú pháp JavaScript, Postman bỏ qua toàn bộ script bên dưới nhưng UI không báo đỏ — vẫn hiện "Pass" (ảo giác Pass).</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="bottom-banner"><b>Bài học:</b> Luôn kiểm tra kỹ biến môi trường và sử dụng linter / console.log trong Postman để debug script.</div>
+    <div class="footer">4 · Failure Modes</div>
+  </div>
+  <div class="navhint">Slide 4 / 4</div>
+
+  <!-- SLIDE 5 : Live Demo (table style + thank you banner) -->
+  <div class="slide">
+    <div class="topbar"></div>
+    <div class="breadcrumb">EShop Seminar · Tuần 3 · API &amp; Contract Testing</div>
+    <div class="title">Demo thực thi API Test (Postman)</div>
+    <div class="subtitle">Live Demo · ~3 phút</div>
+
+    <table class="tbl" style="top:170px;">
+      <thead>
+        <tr>
+          <th style="width:210px;">Bước</th>
+          <th>Nội dung</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="key">1. Đăng nhập &amp; lưu Token</td>
+          <td>Chạy <code>POST /api/login</code>, chỉ ra cách hệ thống tự động lưu Bearer Token vào Environment.</td>
+        </tr>
+        <tr>
+          <td class="key">2. Chạy toàn bộ Collection</td>
+          <td>Collection Runner thực thi 5 endpoints, hiển thị kết quả Pass/Fail hàng loạt theo thời gian thực.</td>
+        </tr>
+        <tr>
+          <td class="key">3. Bắt lỗi thực tế</td>
+          <td>Minh họa bug thực tế bắt được bằng script: ID chẵn trả về giá tiền kiểu chuỗi thay vì số nguyên.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="thanks-banner">Cảm ơn đã theo dõi · Sẵn sàng cho phần Q&amp;A</div>
+    <div class="footer">5 · Live Demo</div>
+  </div>
+  <div class="navhint">Slide 5 / 5</div>
+
+</div>
+</body>
+</html>
