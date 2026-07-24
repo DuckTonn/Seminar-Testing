@@ -133,7 +133,28 @@ npx jest Group05_07/Nam/test/provider.test.js
 ## 7. Hướng dẫn tự động hóa (CI/CD Pipeline)
 **(Phụ trách: Huỳnh Sĩ Luân)**
 
-*(Luân hướng dẫn cách xem và trigger GitHub Actions, cách đọc file Newman HTML Report xuất ra từ Pipeline).*
+Hệ thống CI/CD của EShop được triển khai qua **GitHub Actions** nhằm tự động hóa quá trình chạy kiểm thử API và xác thực hợp đồng Pact mỗi khi mã nguồn thay đổi.
+
+### 7.1. Cách kích hoạt Pipeline (Trigger Pipeline)
+Pipeline được thiết lập tự động chạy trong hai trường hợp chính:
+1. **Push:** Khi có bất kỳ commit nào được đẩy trực tiếp lên nhánh `main`.
+2. **Pull Request:** Khi một thành viên tạo Pull Request (PR) yêu cầu gộp code từ nhánh tính năng (nhánh phụ) vào nhánh `main`. Quy trình này hoạt động như một chốt chặn bảo vệ.
+
+### 7.2. Cách theo dõi tiến trình chạy trên GitHub Actions
+1. Truy cập trang GitHub của dự án EShop.
+2. Nhấp chọn tab **Actions** trên menu thanh công cụ chính.
+3. Chọn run mới nhất ở danh sách phía dưới (tên run trùng với tên commit).
+4. Click chọn job **test-api** ở cột bên trái để chuyển vào giao diện xem log.
+5. Tại đây, bạn có thể quan sát trực tiếp kết quả chạy từng bước: cài đặt môi trường, chạy Pact Consumer, khởi động server backend, quét Newman API Test v2, và chạy Pact Provider Verification.
+
+### 7.3. Cách tải và xem kết quả báo cáo (Newman & Pact Logs)
+Quy trình tự động gom toàn bộ các tệp báo cáo sinh ra trong quá trình kiểm thử vào một thư mục `reports/` để đẩy lên thành Artifact.
+1. Ở trang tóm tắt lần chạy của Actions (Run Summary), cuộn xuống cuối cùng tìm phần **Artifacts**.
+2. Click vào tên **`EShop-Test-Reports`** để tải về tệp tin nén dạng `.zip`.
+3. Giải nén tệp tin này, bạn sẽ nhận được 2 tệp báo cáo chính:
+   * **`newman-report.html` (Báo cáo Newman):** Mở tệp tin này bằng bất kỳ trình duyệt web nào (Chrome, Firefox, Edge). Giao diện trực quan sẽ hiển thị toàn bộ kết quả kiểm thử API v2, bao gồm: tỷ lệ pass/fail của các assertion, chi tiết gói tin request/response và thời gian phản hồi của từng endpoint API.
+   * **`pact-verification-report.txt` (Log xác minh Pact):** Mở bằng text editor. Tệp tin ghi nhận kết quả so khớp hợp đồng của Pact Provider. Nếu backend làm sai cam kết hợp đồng với Consumer, chi tiết lỗi mismatch (như sai kiểu dữ liệu hay thiếu key dữ liệu) sẽ được ghi cụ thể tại đây.
+
 ---
 
 ## 8. Các "Điểm mù" của công cụ (Failure Modes)
