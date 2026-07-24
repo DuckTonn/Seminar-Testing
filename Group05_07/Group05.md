@@ -42,7 +42,19 @@
   - `Nam/pact_setup_summary.md`
   - `Nam/test/`
 
+---
+
 ## Nguyễn Quang Đăng Khoa – 23127212
+
+- Bổ sung nội dung User Guide phần AI Test Generation, định hình quy trình "Human-in-the-loop" và phân tích các Failure Modes khi dùng AI.
+- Tinh chỉnh và cập nhật thư viện Prompt, bổ sung kịch bản prompt đặc trị để ép AI sinh script có tính liên kết (Request Chaining).
+- Soạn thảo kịch bản chi tiết cho phần Live Demo: ứng dụng AI khởi tạo Boilerplate, bắt lỗi False Positive và refactor code.
+- Thiết kế mã HTML cho 5 slide thuyết trình chuyên sâu về phần AI Test Generation để tích hợp vào file Seminar Slides chung của nhóm.
+- Evidence:
+  - `Khoa/User_Guide_AI_Section.md`
+  - `Khoa/Refined_Prompt_Chaining.md`
+  - `Khoa/AI_Demo_Script.md`
+  - `Khoa/AI_Slide_Snippet.html`
 
 ---
 

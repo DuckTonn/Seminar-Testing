@@ -196,7 +196,7 @@
       <div class="duration">API &amp; Contract Testing · Postman Track</div>
     </div>
   </div>
-  <div class="navhint">Slide 1 / 14</div>
+  <div class="navhint">Slide 1 / 19</div>
 
   <!-- SLIDE 2 : Overview features (banner + list, matches "Why this matters") -->
   <div class="slide">
@@ -243,7 +243,7 @@
     </div>
     <div class="footer">2 · Tổng quan Postman</div>
   </div>
-  <div class="navhint">Slide 2 / 14</div>
+  <div class="navhint">Slide 2 / 19</div>
 
   <!-- SLIDE 3 : Test structure & coverage (two column like Tool snapshot) -->
   <div class="slide">
@@ -293,7 +293,7 @@
     </div>
     <div class="footer">3 · Cấu trúc &amp; Coverage</div>
   </div>
-  <div class="navhint">Slide 3 / 14</div>
+  <div class="navhint">Slide 3 / 19</div>
 
   <!-- SLIDE 4 : Postman Failure Modes (table, like Activity steps) -->
   <div class="slide">
@@ -328,7 +328,7 @@
     <div class="bottom-banner"><b>Bài học:</b> Luôn kiểm tra kỹ biến môi trường và sử dụng linter / console.log trong Postman để debug script.</div>
     <div class="footer">4 · Failure Modes</div>
   </div>
-  <div class="navhint">Slide 4 / 14</div>
+  <div class="navhint">Slide 4 / 19</div>
 
   <!-- SLIDE 5 : Live Demo (table style + thank you banner) -->
   <div class="slide">
@@ -362,7 +362,164 @@
 
     <div class="footer">5 · Live Demo Postman</div>
   </div>
-  <div class="navhint">Slide 5 / 14</div>
+  <div class="navhint">Slide 5 / 19</div>
+
+  <!-- AI TRACK SLIDE 1 : COVER  -->
+  <div class="slide cover">
+    <div class="cover-side">
+      <div class="tag">T3</div>
+      <div class="sub">Seminar Nhóm<br>EShop Project</div>
+      <div class="foot">API &amp; Contract Testing · Tuần 3</div>
+    </div>
+    <div class="cover-main">
+      <div class="eyebrow">FIT @ HCMUS · EShop — API &amp; Contract Testing</div>
+      <h1>Tích hợp Trí tuệ Nhân tạo<br>trong API Testing</h1>
+      <div class="desc">Sử dụng AI (ChatGPT/Gemini) làm "Code Generator" để tối ưu hóa thời gian viết script, kết hợp với chiến lược Human-in-the-loop để triệt tiêu False Positive.</div>
+      <div class="activity">NGƯỜI TRÌNH BÀY: NGUYỄN QUANG ĐĂNG KHOA</div>
+      <div class="duration">API &amp; Contract Testing · AI Generation Track</div>
+    </div>
+  </div>
+  <div class="navhint">Slide 6 / 19</div>
+
+  <!-- AI TRACK SLIDE 2 : Năng lực của AI -->
+  <div class="slide">
+    <div class="topbar"></div>
+    <div class="breadcrumb">EShop Seminar · Tuần 3 · API &amp; Contract Testing</div>
+    <div class="title">Sức mạnh của AI: Tốc độ &amp; Chuẩn hóa</div>
+    <div class="subtitle">AI giải quyết xuất sắc bài toán thiết lập ban đầu, tiết kiệm hàng giờ thao tác thủ công.</div>
+
+    <div class="cols" style="top:170px;">
+      <div class="col">
+        <div class="banner">Cách tiếp cận truyền thống (Manual)</div>
+        <div class="cov-item">
+          <div class="h bad">Tốn thời gian setup</div>
+          <div class="d">Phải gõ từng URL, copy từng Header, thiết lập biến môi trường và định dạng từng cục JSON payload bằng tay.</div>
+        </div>
+        <div class="cov-item">
+          <div class="h bad">Dễ sai sót cú pháp</div>
+          <div class="d">Quên dấu phẩy, sai chính tả tên trường dữ liệu khiến API báo lỗi 400 không đáng có.</div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="banner blue">Tiếp cận với AI (Code Generator)</div>
+        <div class="cov-item">
+          <div class="h ok">Biên dịch từ OpenAPI Spec</div>
+          <div class="d">Chỉ cần cung cấp file Đặc tả API, AI sẽ tự động phân tích và parse ra cấu trúc JSON tương thích hoàn toàn với Postman.</div>
+        </div>
+        <div class="cov-item">
+          <div class="h ok">Khởi tạo siêu tốc (&lt; 1 phút)</div>
+          <div class="d">Toàn bộ Collection chuẩn v2.1.0 với đầy đủ URL, Params, Headers và Body giả lập được sinh ra ngay lập tức.</div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">6 · Năng lực của AI</div>
+  </div>
+  <div class="navhint">Slide 7 / 19</div>
+
+  <!-- AI TRACK SLIDE 3 : Điểm mù (Failure Modes) -->
+  <div class="slide">
+    <div class="topbar"></div>
+    <div class="breadcrumb">EShop Seminar · Tuần 3 · API &amp; Contract Testing</div>
+    <div class="title red">AI Failure Modes</div>
+    <div class="subtitle">Nhận diện các rủi ro nguy hiểm khiến kết quả kiểm thử bị sai lệch (False Positive).</div>
+
+    <table class="tbl" style="top:170px;">
+      <thead>
+        <tr>
+          <th class="red" style="width:230px;">Failure Mode</th>
+          <th class="red">Hiện tượng &amp; Hậu quả</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="key">Schema Validation Rỗng</td>
+          <td>AI thường sinh schema dạng <code>"properties": {}</code> và <code>"additionalProperties": true</code>. Lỗi này khiến Postman <b>chấp nhận mọi dữ liệu trả về</b> (kể cả khi API sập và văng ra lỗi nội bộ). Gây ra False Positive cực kỳ nguy hiểm.</td>
+        </tr>
+        <tr>
+          <td class="key">Thiên kiến Happy-path</td>
+          <td>Chỉ ưu tiên sinh các luồng dữ liệu chuẩn xác. Hoàn toàn bỏ qua các ràng buộc nghiệp vụ (Business Rules) như: áp dụng mã giảm giá sai điều kiện, hoặc giỏ hàng trống vẫn Checkout.</td>
+        </tr>
+        <tr>
+          <td class="key">Bỏ sót RBAC &amp; IDOR</td>
+          <td>Mặc định mọi API đều dùng chung 1 <code>{{token}}</code>. AI không có tư duy test phân quyền chéo (Ví dụ: Dùng tài khoản User thường gọi API Xóa của Admin).</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="bottom-banner"><b>Bài học:</b> Không bao giờ tin tưởng hoàn toàn vào chữ "Pass" màu xanh nếu chưa review code JS do AI sinh ra!</div>
+    <div class="footer">7 · Điểm mù của AI</div>
+  </div>
+  <div class="navhint">Slide 8 / 19</div>
+
+  <!-- AI TRACK SLIDE 4 : Human in the loop -->
+  <div class="slide">
+    <div class="topbar"></div>
+    <div class="breadcrumb">EShop Seminar · Tuần 3 · API &amp; Contract Testing</div>
+    <div class="title">Chiến lược Human-in-the-loop</div>
+    <div class="subtitle">Kết hợp tốc độ của máy móc và tư duy kiểm thử của QA Engineer.</div>
+
+    <div class="cols">
+      <div class="col">
+        <div class="banner">1. Prompt Engineering Chuyên Sâu</div>
+        <div class="flow-row">
+          <div class="flow-num">1</div>
+          <div class="flow-body"><b>Prompt Đặc Trị</b><br><span class="flow-desc">Sử dụng thư viện prompt chuẩn. Ví dụ: Ép AI viết Request Chaining để tự động lấy <code>order_id</code> truyền qua API khác.</span></div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-num">2</div>
+          <div class="flow-body"><b>Ép buộc Schema Chặt Chẽ</b><br><span class="flow-desc">Lệnh cho AI phải khai báo mảng <code>required</code> và set cứng <code>additionalProperties: false</code>.</span></div>
+        </div>
+      </div>
+      <div class="col">
+        <div class="banner blue">2. Vai trò của Kỹ sư</div>
+        <div class="flow-row">
+          <div class="flow-num">3</div>
+          <div class="flow-body"><b>Kiểm duyệt Script (pm.test)</b><br><span class="flow-desc">Tuyệt đối không import và chạy mù quáng. Kỹ sư QA phải review lại logic gán biến và các câu lệnh assert.</span></div>
+        </div>
+        <div class="flow-row">
+          <div class="flow-num">4</div>
+          <div class="flow-body"><b>Bổ sung Manual Edge Cases</b><br><span class="flow-desc">Tự thiết kế thủ công các kịch bản Security (Broken Access Control), Boundary Value mà AI thường bỏ sót.</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">8 · Chiến lược Human-in-the-loop</div>
+  </div>
+  <div class="navhint">Slide 9 / 19</div>
+
+  <!-- AI TRACK SLIDE 5 : Live Demo -->
+  <div class="slide">
+    <div class="topbar"></div>
+    <div class="breadcrumb">EShop Seminar · Tuần 3 · API &amp; Contract Testing</div>
+    <div class="title">Demo AI Test Generation &amp; Refactoring</div>
+    <div class="subtitle">Live Demo · ~3 phút</div>
+
+    <table class="tbl" style="top:170px;">
+      <thead>
+        <tr>
+          <th style="width:210px;">Bước demo</th>
+          <th>Nội dung thực hiện</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="key">1. Khởi tạo Boilerplate</td>
+          <td>Cung cấp API Specification cho AI và yêu cầu sinh Postman Collection v2.1.0 cơ bản chỉ trong vài giây.</td>
+        </tr>
+        <tr>
+          <td class="key">2. Vạch trần False Positive</td>
+          <td>Chạy thử API Checkout và nhận kết quả Pass giả. Mở tab Tests để chỉ ra JSON schema rỗng <code>properties: {}</code> nguy hiểm như thế nào.</td>
+        </tr>
+        <tr>
+          <td class="key">3. Request Chaining</td>
+          <td>Sử dụng <b>Prompt</b> ép AI phải viết lại kịch bản: trích xuất <code>order_id</code> lưu vào Environment và tự động truyền sang API Get Order.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="bottom-banner"><b>Kết luận:</b> AI đóng vai trò loại bỏ thao tác setup nhàm chán, giải phóng thời gian để QA tập trung 100% vào việc thiết kế Test Case chất lượng cao.</div>
+    <div class="footer">9 · Live Demo AI Generation</div>
+  </div>
+  <div class="navhint">Slide 10 / 19</div>
 
   <!-- PACT SLIDE 1 : COVER -->
   <div class="slide cover">
@@ -379,7 +536,7 @@
       <div class="duration">API &amp; Contract Testing · Pact Track</div>
     </div>
   </div>
-  <div class="navhint">Slide 6 / 14</div>
+  <div class="navhint">Slide 11 / 19</div>
 
   <!-- SLIDE 2 : Contract Testing vs Integration Testing -->
   <div class="slide">
@@ -422,7 +579,7 @@
     </div>
     <div class="footer">12 · Integration vs Contract Testing</div>
   </div>
-  <div class="navhint">Slide 7 / 14</div>
+  <div class="navhint">Slide 12 / 19</div>
 
   <!-- SLIDE 3 : Consumer-Driven Contract (CDC) -->
   <div class="slide">
@@ -465,7 +622,7 @@
     </div>
     <div class="footer">13 · Consumer-Driven Contract (CDC)</div>
   </div>
-  <div class="navhint">Slide 8 / 14</div>
+  <div class="navhint">Slide 13 / 19</div>
 
   <!-- SLIDE 4 : Pact Failure Modes (table) -->
   <div class="slide">
@@ -500,7 +657,7 @@
     <div class="bottom-banner"><b>Ghi nhớ:</b> Contract Testing nằm giữa Unit Test và E2E Test. Hãy tối ưu để tăng tốc độ phát triển và CI/CD.</div>
     <div class="footer">14 · Lưu ý khi dùng Pact</div>
   </div>
-  <div class="navhint">Slide 9 / 14</div>
+  <div class="navhint">Slide 14 / 19</div>
 
   <!-- SLIDE 5 : Live Demo (table style + thank you banner) -->
   <div class="slide">
@@ -538,7 +695,7 @@
 
     <div class="footer">10 · Live Demo Contract Testing</div>
   </div>
-  <div class="navhint">Slide 10 / 14</div>
+  <div class="navhint">Slide 15 / 19</div>
 
   <!-- SLIDE 6 : CI/CD Role -->
   <div class="slide">
@@ -573,7 +730,7 @@
     </div>
     <div class="footer">11 · Vai trò CI/CD</div>
   </div>
-  <div class="navhint">Slide 11 / 14</div>
+  <div class="navhint">Slide 16 / 19</div>
 
   <!-- SLIDE 7 : Pipeline Design -->
   <div class="slide">
@@ -616,7 +773,7 @@
     </div>
     <div class="footer">12 · Thiết kế Pipeline</div>
   </div>
-  <div class="navhint">Slide 12 / 14</div>
+  <div class="navhint">Slide 17 / 19</div>
 
   <!-- SLIDE 8 : Automated Reports -->
   <div class="slide">
@@ -651,7 +808,7 @@
     <div class="bottom-banner"><b>Lưu ý:</b> Cấu hình bước xuất báo cáo với thuộc tính <code>if: always()</code> để đảm bảo luôn thu thập được log kể cả khi test fail.</div>
     <div class="footer">13 · Báo cáo &amp; Artifacts</div>
   </div>
-  <div class="navhint">Slide 13 / 14</div>
+  <div class="navhint">Slide 18 / 19</div>
 
   <!-- SLIDE 9 : Live Demo CI/CD -->
   <div class="slide">
@@ -686,7 +843,7 @@
     <div class="thanks-banner">Cảm ơn đã theo dõi · Sẵn sàng cho phần Q&amp;A</div>
     <div class="footer">14 · Live Demo CI/CD</div>
   </div>
-  <div class="navhint">Slide 14 / 14</div>
+  <div class="navhint">Slide 19 / 19</div>
 
 </div>
 </body>
