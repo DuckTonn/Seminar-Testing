@@ -18,7 +18,7 @@
 - Chuẩn bị sẵn sàng kịch bản Demo thực tế (Live Demo) trên Postman cho buổi báo cáo.
 - Evidence:
   - `Toàn/User_Guide_Postman.md`
-  - `Toàn/Slides_API_Testing.md`
+  - `Toàn/Demo_Postman_Script.md`
 
 ---
 
@@ -54,7 +54,7 @@
   - `Khoa/User_Guide_AI_Section.md`
   - `Khoa/Refined_Prompt_Chaining.md`
   - `Khoa/AI_Demo_Script.md`
-  - `Khoa/AI_Slide_Snippet.html`
+
 
 ---
 
