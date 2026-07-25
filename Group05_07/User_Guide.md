@@ -207,9 +207,12 @@ Quy trình tự động gom toàn bộ các tệp báo cáo sinh ra trong quá t
 - **Lỗi "Silent Failure" trong script JavaScript (Bỏ qua lỗi ngầm):** Tab **Tests** trong Postman sử dụng mã JavaScript. Nếu bạn lỡ tay viết sai cú pháp (syntax error) hoặc gọi một hàm không tồn tại ở nửa đầu đoạn script, đoạn script đó sẽ bị crash. Tuy nhiên, **Postman không báo lỗi cú pháp đỏ rực lên màn hình UI**, mà nó chỉ âm thầm skip (bỏ qua) các câu lệnh `pm.test` bên dưới. Hệ quả là số lượng Test Cases trong tab "Test Results" bị giảm đi, và nếu các test chạy được đều Pass, UI vẫn hiện màu xanh "Pass" đánh lừa người dùng rằng mọi thứ đều ổn định.
 
 ### 8.2. AI Generation Failure Modes
-*(Khoa liệt kê các lỗi ảo giác, code sinh sai logic của AI).*
+- **Schema Validation rỗng (False Positives nguy hiểm):** Khi yêu cầu sinh test, AI thường tạo JSON Schema rỗng (VD: `"properties": {}`, `"additionalProperties": true`). Hệ quả là Postman sẽ chấp nhận mọi dữ liệu trả về (kể cả khi hệ thống sập hoặc trả về thông báo lỗi), làm xuất hiện trạng thái "Pass" ảo giác vô cùng nguy hiểm.
+- **Bỏ qua ràng buộc nghiệp vụ (Business Rules Ignorance):** AI chỉ có khả năng lắp ráp payload đúng định dạng (cấu trúc JSON) nhưng không hiểu logic nghiệp vụ sâu. Ví dụ: API yêu cầu đơn hàng phải trên 500k mới được áp mã giảm giá, nhưng AI vẫn sinh test áp mã thành công cho đơn 100k, dẫn đến việc bỏ lọt lỗi nghiệp vụ.
+- **Thiếu tư duy kiểm thử phân quyền (RBAC & IDOR Failure):** AI mặc định dùng duy nhất một biến `{{token}}` cho toàn bộ mọi request. Nó hoàn toàn bỏ sót các kịch bản kiểm thử bảo mật như: User thường gọi API của Admin, hoặc User A xem đơn hàng của User B (lỗi IDOR).
+- **Thiên kiến Happy-path và dữ liệu tĩnh:** AI có xu hướng chỉ viết các kịch bản thành công (Happy-path) và gắn cứng (hardcode) dữ liệu. Nếu chạy tự động trên CI/CD nhiều lần, dữ liệu tĩnh này sẽ gây xung đột (VD: tạo trùng email). AI cũng hiếm khi tự sinh các Boundary Value (giá trị âm, rỗng, null) để test Backend Validation.
 
-### 8.3. Pact Failure Modes (Nam)
+### 8.3. Pact Failure Modes
 - **Silent Schema Change (Postel's Law):** Khác với sự chặt chẽ của Postman hay sự "hời hợt" của AI, Pact chỉ kiểm tra đúng những gì Consumer yêu cầu. Nếu Backend thêm trường dữ liệu mới (làm thay đổi ngầm luồng nghiệp vụ), Pact vẫn Pass.
 - **Phụ thuộc 100% vào Consumer Test:** Tương tự như "Thiên kiến Happy-path" của AI, nếu Consumer quên viết contract cho trường hợp báo lỗi (VD: 401 Unauthorized), thì việc Backend vô tình gỡ bỏ xác thực vẫn sẽ lọt qua mắt Pact. 
 - **Bùng nổ chi phí bảo trì (State Handlers):** Khi số lượng API tăng, việc duy trì trạng thái test (`stateHandlers`) phía Provider trở thành ác mộng. Nếu thiếu cơ chế teardown dọn dẹp data, dữ liệu rác sẽ gây xung đột, tạo ra "Flaky tests" (lỗi ngẫu nhiên), điều mà Postman hay AI ít gặp hơn trên môi trường test dùng một lần.
