@@ -55,8 +55,8 @@ Tổng hợp verdict từ Mục 3 và điền vào bảng dưới.
 
 | Chỉ số | Số lượng | Tỉ lệ |
 | :---- | :---- | :---- |
-| **Tổng artifact AI sinh đã audit** | 4 | 100% |
-| **VALID (đúng, dùng nguyên)** | 2 | 50% |
+| **Tổng artifact AI sinh đã audit** | 8 | 100% |
+| **VALID (đúng, dùng nguyên)** | 4 | 50% |
 | **INVALID (sai; loại bỏ)** | 0 | 0% |
 | **INCOMPLETE (chấp nhận sau khi sửa)** |  | % |
 

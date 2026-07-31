@@ -47,9 +47,9 @@
 
 ### **3\. Prompt / nhiệm vụ chính cho AI:**
 
-1. "Viết giúp tôi kịch bản thuyết trình chi tiết khoảng 2 phút để demo tính năng lưu Token tự động và chạy Collection Runner của Postman..."
-2. "Tôi đang tự viết báo cáo phân tích Failure Modes của AI khi test hệ thống EShop. Mày hãy giải thích ngắn gọn tại sao đoạn script JSON Schema do AI gen có 'properties': {} lại gây ra lỗi False Positive..."
-3. "Bạn là một Technical Writer và chuyên gia Software Testing. Tôi đang ở Tuần 3 của dự án nhóm về 'API & Contract Testing'..."
+1. "Bạn là chuyên gia QA... thiết lập môi trường Contract Testing ở phía Consumer..."
+2. "Tôi đang tự viết báo cáo phân tích Failure Modes của AI... giải thích tại sao đoạn script JSON Schema do AI gen có 'properties': {} lại gây ra lỗi False Positive..."
+3. "Hãy nghiên cứu quy trình API Testing cho hệ thống E-Shop, đề xuất workflow phù hợp, xây dựng kế hoạch triển khai theo các milestone..."
 
 ### **4\. Phần cụ thể AI đóng góp:**
 
