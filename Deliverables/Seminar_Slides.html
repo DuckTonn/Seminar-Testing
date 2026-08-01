@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <title>API Testing bằng Postman — EShop Seminar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --navy: #1F4E79;
+      --ink: #202020;
+      --blue: #2E75B6;
+      --red: #C00000;
+      --green: #375623;
+      --lav: #D9E1F2;
+      --gray: #F2F2F2;
+      --white: #FFFFFF;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      background: #5b6673;
+      font-family: 'Inter', Arial, "Helvetica Neue", sans-serif;
+      color: var(--ink);
+    }
+
+    .deck {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+      padding: 36px 0 60px;
+    }
+
+    .slide {
+      width: 1280px;
+      height: 720px;
+      background: var(--white);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
+      flex-shrink: 0;
+    }
+
+    /* ---------- shared chrome ---------- */
+    .topbar {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 14px;
+      background: var(--navy);
+    }
+
+    .breadcrumb {
+      position: absolute;
+      top: 22px;
+      left: 52px;
+      right: 52px;
+      font-size: 14px;
+      font-weight: bold;
+      color: var(--navy);
+    }
+
+    .title {
+      position: absolute;
+      left: 52px;
+      right: 52px;
+      top: 56px;
+      font-size: 38px;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.15;
+    }
+
+    .title.red {
+      color: var(--red);
+    }
+
+    .footer {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 34px;
+      background: var(--navy);
+      color: var(--white);
+      font-size: 12px;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      padding-left: 20px;
+    }
+
+    /* ---------- title slide ---------- */
+    .slide.cover {
+      display: flex;
+    }
+
+    .cover-side {
+      width: 34%;
+      height: 100%;
+      background: var(--navy);
+      color: var(--white);
+      padding: 40px 34px;
+      position: relative;
+    }
+
+    .cover-side .tag {
+      font-size: 66px;
+      font-weight: 900;
+      margin-top: 70px;
+      line-height: 1;
+    }
+
+    .cover-side .sub {
+      margin-top: 26px;
+      font-size: 20px;
+      line-height: 1.3;
+      font-weight: 400;
+    }
+
+    .cover-side .foot {
+      position: absolute;
+      bottom: 34px;
+      left: 34px;
+      right: 34px;
+      font-size: 12px;
+      font-style: italic;
+      opacity: .85;
+    }
+
+    .cover-main {
+      flex: 1;
+      padding: 56px 60px;
+      position: relative;
+    }
+
+    .cover-main .eyebrow {
+      font-size: 15px;
+      font-style: italic;
+      color: var(--blue);
+      font-weight: bold;
+    }
+
+    .cover-main h1 {
+      font-size: 38px;
+      color: var(--navy);
+      margin: 26px 0 0;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .cover-main .desc {
+      margin-top: 34px;
+      font-size: 18px;
+      font-style: italic;
+      color: var(--ink);
+      line-height: 1.4;
+      max-width: 640px;
+    }
+
+    .cover-main .activity {
+      margin-top: 60px;
+      background: var(--lav);
+      color: var(--navy);
+      font-weight: 800;
+      font-size: 20px;
+      text-align: center;
+      padding: 20px;
+      border-radius: 2px;
+    }
+
+    .cover-main .duration {
+      margin-top: 16px;
+      font-size: 14px;
+      color: var(--ink);
+    }
+
+    /* ---------- banner (section header bar) ---------- */
+    .banner {
+      background: var(--navy);
+      color: var(--white);
+      font-weight: 800;
+      font-size: 17px;
+      text-align: center;
+      padding: 12px 10px;
+      border-radius: 2px;
+      box-shadow: 1px 2px 4px rgba(0, 0, 0, .25);
+    }
+
+    .banner.blue {
+      background: var(--blue);
+    }
+
+    .banner.red {
+      background: var(--red);
+    }
+
+    .banner.green {
+      background: var(--green);
+    }
+
+    /* ---------- two-column layout (slide 2) ---------- */
+    .cols {
+      position: absolute;
+      top: 150px;
+      left: 52px;
+      right: 52px;
+      bottom: 64px;
+      display: flex;
+      gap: 36px;
+    }
+
+    .col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .col .banner {
+      margin-bottom: 16px;
+    }
+
+    .flow-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .flow-num {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--navy);
+      color: #fff;
+      font-weight: 800;
+      font-size: 13px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .flow-body b {
+      font-size: 15px;
+      color: var(--ink);
+    }
+
+    .pill {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 800;
+      color: #fff;
+      padding: 2px 8px;
+      border-radius: 3px;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    .pill.get {
+      background: #375623;
+    }
+
+    .pill.post {
+      background: var(--red);
+    }
+
+    .flow-path {
+      font-family: "Courier New", monospace;
+      font-size: 13px;
+      color: #444;
+    }
+
+    .flow-desc {
+      font-size: 14px;
+      color: #444;
+      line-height: 1.4;
+      display: inline-block;
+      margin-top: 4px;
+    }
+
+    .cov-item {
+      background: var(--gray);
+      border-radius: 3px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
+    }
+
+    .cov-item .h {
+      font-weight: 800;
+      font-size: 15px;
+      margin-bottom: 6px;
+    }
+
+    .cov-item .h.ok {
+      color: var(--green);
+    }
+
+    .cov-item .h.bad {
+      color: var(--red);
+    }
+
+    .cov-item .h.warn {
+      color: #B8860B;
+    }
+
+    .cov-item .d {
+      font-size: 13px;
+      line-height: 1.4;
+      color: #333;
+    }
+
+    /* ---------- table style (slides 3 & 4) ---------- */
+    .tbl {
+      position: absolute;
+      top: 150px;
+      left: 52px;
+      right: 52px;
+      border-collapse: collapse;
+      width: 1176px;
+    }
+
+    .tbl thead th {
+      background: var(--navy);
+      color: #fff;
+      font-size: 15px;
+      text-align: left;
+      padding: 12px 18px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, .2);
+    }
+
+    .tbl thead th.red {
+      background: var(--red);
+    }
+
+    .tbl tbody td {
+      padding: 16px 18px;
+      font-size: 14.5px;
+      vertical-align: top;
+      line-height: 1.4;
+    }
+
+    .tbl tbody tr:nth-child(odd) {
+      background: var(--lav);
+    }
+
+    .tbl tbody tr:nth-child(even) {
+      background: var(--gray);
+    }
+
+    .tbl td.key {
+      font-weight: 800;
+      color: var(--navy);
+      white-space: nowrap;
+      width: 210px;
+    }
+
+    .subtitle {
+      position: absolute;
+      left: 52px;
+      top: 104px;
+      right: 52px;
+      font-size: 15px;
+      color: #444;
+    }
+
+    .bottom-banner {
+      position: absolute;
+      left: 52px;
+      right: 52px;
+      bottom: 70px;
+      background: var(--navy);
+      color: #fff;
+      border-radius: 3px;
+      padding: 18px 24px;
+      font-size: 15px;
+      line-height: 1.4;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .25);
+    }
+
+    .bottom-banner b {
+      color: #8FD4C9;
+    }
+
+    .thanks-banner {
+      position: absolute;
+      left: 52px;
+      right: 52px;
+      bottom: 64px;
+      background: var(--red);
+      color: #fff;
+      text-align: center;
+      font-weight: 800;
+      font-size: 18px;
+      padding: 18px;
+      border-radius: 3px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, .25);
+    }
+
+    /* page nav (screen-only) */
+    .navhint {
+      color: #c9d2dd;
+      font-size: 13px;
+      text-align: center;
+      margin-top: -8px;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .slide {
+        box-shadow: none;
+        margin: 0;
+        page-break-after: always;
+      }
+
+      .navhint {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="deck">
+
+    <!-- SLIDE 1 : COVER -->
+    <div class="slide cover">
+      <div class="cover-side">
+        <div class="tag">T06</div>
+        <div class="sub">Seminar Nhóm 05<br>EShop Project</div>
+        <div class="foot">T06_API_and_Contract_Testing</div>
+      </div>
+      <div class="cover-main">
+        <div class="eyebrow">FIT @ HCMUS · EShop Project</div>
+        <h1>API &amp; Contract Testing<br>với Postman, AI &amp; Pact</h1>
+        <div class="desc">Kiểm thử toàn diện hệ thống backend EShop từ việc sinh test bằng AI, kiểm thử thủ công/tự động
+          bằng Postman, đến đảm bảo hợp đồng giao tiếp với Pact qua CI/CD Pipeline.</div>
+        <div class="activity">NHÓM THỰC HIỆN: GROUP 05</div>
+        <div class="duration">
+          <p>Thành viên:</p>
+          <ul>
+            <li>Phạm Đức Toàn - 23127540</li>
+            <li>Nguyễn Quang Đăng Khoa - 23127212</li>
+            <li>Nguyễn Nhật Nam - 23127092</li>
+            <li>Huỳnh Sĩ Luân - 23127086</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="navhint">Slide 1 / 15</div>
+
+    <!-- SLIDE 2 : Overview features (banner + list, matches "Why this matters") -->
+    <div class="slide">
+      <div class="topbar"></div>
+      <div class="breadcrumb">EShop Seminar · T06_API_and_Contract_Testing</div>
+      <div class="title">Tính năng nổi bật của Postman</div>
+      <div class="subtitle">Postman là công cụ phổ biến nhất hiện nay cho phát triển &amp; kiểm thử API — giao diện trực
+        quan cho cả Developer và QA.</div>
+
+      <div class="cols" style="top:170px;">
+        <div class="col">
+          <div class="banner">Áp dụng cho EShop</div>
+          <div class="flow-row">
+            <div class="flow-num">1</div>
+            <div class="flow-body"><b>Import OpenAPI/Swagger</b><br><span class="flow-desc">Chuyển spec thành collection
+                ngay lập tức</span></div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-num">2</div>
+            <div class="flow-body"><b>Environment &amp; Auth Variables</b><br><span class="flow-desc">Quản lý biến môi
+                trường linh hoạt</span></div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-num">3</div>
+            <div class="flow-body"><b>Test Scripts (JavaScript)</b><br><span class="flow-desc">Viết kịch bản kiểm thử
+                ngay trong app</span></div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-num">4</div>
+            <div class="flow-body"><b>Collection Runner + Newman</b><br><span class="flow-desc">Chạy hàng loạt, tích hợp
+                CI/CD</span></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="banner blue">Vì sao QA &amp; Dev cùng dùng được</div>
+          <div class="cov-item">
+            <div class="h ok">Giao diện trực quan (UI)</div>
+            <div class="d">Dễ tiếp cận cho cả người mới lẫn Developer có kinh nghiệm, không cần viết code để bắt đầu.
+            </div>
+          </div>
+          <div class="cov-item">
+            <div class="h ok">Có thể lập trình được</div>
+            <div class="d">Test Script bằng JavaScript giúp kiểm tra logic nghiệp vụ sâu hơn ngoài status code.</div>
+          </div>
+          <div class="cov-item">
+            <div class="h ok">Sẵn sàng CI/CD</div>
+            <div class="d">Newman cho phép chạy Collection tự động trong pipeline, không cần mở UI thủ công.</div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">2 · Tổng quan Postman</div>
+    </div>
+    <div class="navhint">Slide 2 / 15</div>
+
+    <!-- SLIDE 3 : Test structure & coverage (two column like Tool snapshot) -->
+    <div class="slide">
+      <div class="topbar"></div>
+      <div class="breadcrumb">EShop Seminar · T06_API_and_Contract_Testing</div>
+      <div class="title">Cấu trúc bộ Test &amp; Phạm vi bao phủ</div>
+
+      <div class="cols">
+        <div class="col">
+          <div class="banner">5 luồng API cốt lõi</div>
+          <div class="flow-row">
+            <div class="flow-num">1</div>
+            <div class="flow-body"><b>Authentication</b><br><span class="pill post">POST</span><span
+                class="flow-path">/api/login</span></div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-num">2</div>
+            <div class="flow-body"><b>Product Listing</b><br><span class="pill get">GET</span><span
+                class="flow-path">/api/products</span></div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-num">3</div>
+            <div class="flow-body"><b>Product Details</b><br><span class="pill get">GET</span><span
+                class="flow-path">/api/products/:id</span></div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-num">4</div>
+            <div class="flow-body"><b>Cart Management</b><br><span class="pill post">POST</span><span
+                class="flow-path">/api/cart</span></div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-num">5</div>
+            <div class="flow-body"><b>Order Checkout</b><br><span class="pill post">POST</span><span
+                class="flow-path">/api/checkout</span></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="banner red">Độ bao phủ Test Cases</div>
+          <div class="cov-item">
+            <div class="h ok">✓ Happy Path</div>
+            <div class="d">Đảm bảo luồng xử lý thành công đúng nghiệp vụ (Status 200, schema chuẩn).</div>
+          </div>
+          <div class="cov-item">
+            <div class="h bad">✗ Negative Path</div>
+            <div class="d">Bắt lỗi các trường hợp token hết hạn, sai mật khẩu, tài khoản bị khóa.</div>
+          </div>
+          <div class="cov-item">
+            <div class="h warn">⚠ Edge Cases</div>
+            <div class="d">Xử lý các tình huống dị biệt: body rỗng, quantity âm, ID không hợp lệ.</div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">3 · Cấu trúc &amp; Coverage</div>
+    </div>
+    <div class="navhint">Slide 3 / 15</div>
+
+    <!-- SLIDE 4 : Postman Failure Modes (table, like Activity steps) -->
+    <div class="slide">
+      <div class="topbar"></div>
+      <div class="breadcrumb">EShop Seminar · T06_API_and_Contract_Testing</div>
+      <div class="title red">Postman Failure Modes — điểm mù của tool</div>
+      <div class="subtitle">Các lỗi thường gặp do công cụ, dễ gây hiểu lầm cho người test.</div>
+
+      <table class="tbl" style="top:170px;">
+        <thead>
+          <tr>
+            <th class="red" style="width:210px;">Failure mode</th>
+            <th class="red">Mô tả</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="key">Sai kiểu dữ liệu</td>
+            <td>API trả về String, nhưng logic test yêu cầu Number. Báo lỗi mơ hồ khiến QA lầm tưởng API sai nghiệp vụ.
+            </td>
+          </tr>
+          <tr>
+            <td class="key">Quên chọn Environment</td>
+            <td>Gửi URL hoặc Token chứa chuỗi chưa được parse (VD: <code>{{baseUrl}}</code>), dẫn đến API sập nhưng mất
+              thời gian debug sai hướng.</td>
+          </tr>
+          <tr>
+            <td class="key">Silent Failure trong Script</td>
+            <td>Viết sai cú pháp JavaScript, Postman bỏ qua toàn bộ script bên dưới nhưng UI không báo đỏ — vẫn hiện
+              "Pass" (ảo giác Pass).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="bottom-banner"><b>Bài học:</b> Luôn kiểm tra kỹ biến môi trường và sử dụng linter / console.log trong
+        Postman để debug script.</div>
+      <div class="footer">4 · Failure Modes</div>
+    </div>
+    <div class="navhint">Slide 4 / 15</div>
+
+    <!-- SLIDE 5 : Live Demo (table style + thank you banner) -->
+    <div class="slide">
+      <div class="topbar"></div>
+      <div class="breadcrumb">EShop Seminar · T06_API_and_Contract_Testing</div>
+      <div class="title">Demo thực thi API Test (Postman)</div>
+      <div class="subtitle">Live Demo · ~3 phút</div>
+      <div style="position:absolute; top:70px; right:52px;" class="banner red">🔔 [GHI CHÚ]: CHÈN VIDEO DEMO POSTMAN VÀO
+        ĐÂY SAU</div>
+
+      <table class="tbl" style="top:170px;">
+        <thead>
+          <tr>
+            <th style="width:210px;">Bước</th>
+            <th>Nội dung</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="key">1. Đăng nhập &amp; lưu Token</td>
+            <td>Chạy <code>POST /api/login</code>, chỉ ra cách hệ thống tự động lưu Bearer Token vào Environment.</td>
+          </tr>
+          <tr>
+            <td class="key">2. Chạy toàn bộ Collection</td>
+            <td>Collection Runner thực thi 5 endpoints, hiển thị kết quả Pass/Fail hàng loạt theo thời gian thực.</td>
+          </tr>
+          <tr>
+            <td class="key">3. Bắt lỗi thực tế</td>
+            <td>Minh họa bug thực tế bắt được bằng script: ID chẵn trả về giá tiền kiểu chuỗi thay vì số nguyên.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="footer">5 · Live Demo Postman</div>
+    </div>
+    <div class="navhint">Slide 5 / 15</div>
+
+
+    <div class="navhint">Slide 5 / 15</div>
+
+    <!-- AI TRACK SLIDE 2 : Năng lực của AI -->
+    <div class="slide">
+      <div class="topbar"></div>
+      <div class="breadcrumb">EShop Seminar · T06_API_and_Contract_Testing</div>
+      <div class="title">Sức mạnh của AI: Tốc độ &amp; Chuẩn hóa</div>
+      <div class="subtitle">AI giải quyết xuất sắc bài toán thiết lập ban đầu, tiết kiệm hàng giờ thao tác thủ công.
+      </div>
+
+      <div class="cols" style="top:170px;">
+        <div class="col">
+          <div class="banner">Cách tiếp cận truyền thống (Manual)</div>
+          <div class="cov-item">
+            <div class="h bad">Tốn thời gian setup</div>
+            <div class="d">Phải gõ từng URL, copy từng Header, thiết lập biến môi trường và định dạng từng cục JSON
+              payload bằng tay.</div>
+          </div>
+          <div class="cov-item">
+            <div class="h bad">Dễ sai sót cú pháp</div>
+            <div class="d">Quên dấu phẩy, sai chính tả tên trường dữ liệu khiến API báo lỗi 400 không đáng có.</div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="banner blue">Tiếp cận với AI (Code Generator)</div>
+          <div class="cov-item">
+            <div class="h ok">Biên dịch từ OpenAPI Spec</div>
+            <div class="d">Chỉ cần cung cấp file Đặc tả API, AI sẽ tự động phân tích và parse ra cấu trúc JSON tương
+              thích hoàn toàn với Postman.</div>
+          </div>
+          <div class="cov-item">
+            <div class="h ok">Khởi tạo siêu tốc (&lt; 1 phút)</div>
+            <div class="d">Toàn bộ Collection chuẩn v2.1.0 với đầy đủ URL, Params, Headers và Body giả lập được sinh ra
+              ngay lập tức.</div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">6 · Năng lực của AI</div>
+    </div>
+    <div class="navhint">Slide 6 / 15</div>
+
+    <!-- AI TRACK SLIDE 3 : Điểm mù (Failure Modes) -->
+    <div class="slide">
+      <div class="topbar"></div>
+      <div class="breadcrumb">EShop Seminar · T06_API_and_Contract_Testing</div>
+      <div class="title red">AI Failure Modes</div>
+      <div class="subtitle">Nhận diện các rủi ro nguy hiểm khiến kết quả kiểm thử bị sai lệch (False Positive).</div>
+
+      <table class="tbl" style="top:170px;">
+        <thead>
+          <tr>
+            <th class="red" style="width:230px;">Failure Mode</th>
+            <th class="red">Hiện tượng &amp; Hậu quả</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="key">Schema Validation Rỗng</td>
+            <td>AI thường sinh schema dạng <code>"properties": {}</code> và <code>"additionalProperties": true</code>.
+              Lỗi này khiến Postman <b>chấp nhận mọi dữ liệu trả về</b> (kể cả khi API sập và văng ra lỗi nội bộ). Gây
+              ra False Positive cực kỳ nguy hiểm.</td>
+          </tr>
+          <tr>
+            <td class="key">Thiên kiến Happy-path</td>
+            <td>Chỉ ưu tiên sinh các luồng dữ liệu chuẩn xác. Hoàn toàn bỏ qua các ràng buộc nghiệp vụ (Business Rules)
+              như: áp dụng mã giảm giá sai điều kiện, hoặc giỏ hàng trống vẫn Checkout.</td>
+          </tr>
+          <tr>
+            <td class="key">Bỏ sót RBAC &amp; IDOR</td>
+            <td>Mặc định mọi API đều dùng chung 1 <code>{{token}}</code>. AI không có tư duy test phân quyền chéo (Ví
+              dụ: Dùng tài khoản User thường gọi API Xóa của Admin).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="bottom-banner"><b>Bài học:</b> Không bao giờ tin tưởng hoàn toàn vào chữ "Pass" màu xanh nếu chưa
+        review code JS do AI sinh ra!</div>
+      <div class="footer">7 · Điểm mù của AI</div>
+    </div>
+    <div class="navhint">Slide 7 / 15</div>
+
+    <!-- AI TRACK SLIDE 4 : Human in the loop -->
+    <div class="slide">
+      <div class="topbar"></div>
+      <div class="breadcrumb">EShop Seminar · T06_API_and_Contract_Testing</div>
+      <div class="title">Demo AI Test Generation &amp; Refactoring</div>
+      <div class="subtitle">Live Demo · ~3 phút</div>
+      <div style="position:absolute; top:70px; right:52px;" class="banner red">🔔 [GHI CHÚ]: CHÈN VIDEO DEMO AI VÀO ĐÂY
+        SAU</div>
+
+      <table class="tbl" style="top:170px;">
+        <thead>
+          <tr>
+            <th style="width:210px;">Bước demo</th>
+            <th>Nội dung thực hiện</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="key">1. Khởi tạo Boilerplate</td>
+            <td>Cung cấp API Specification cho AI và yêu cầu sinh Postman Collection v2.1.0 cơ bản chỉ trong vài giây.
+            </td>
+          </tr>
+          <tr>
+            <td class="key">2. Vạch trần False Positive</td>
+            <td>Chạy thử API Checkout và nhận kết quả Pass giả. Mở tab Tests để chỉ ra JSON schema rỗng
+              <code>properties: {}</code> nguy hiểm như thế nào.
+            </td>
+          </tr>
+          <tr>
+            <td class="key">3. Request Chaining</td>
+            <td>Sử dụng <b>Prompt</b> ép AI phải viết lại kịch bản: trích xuất <code>order_id</code> lưu vào Environment
+              và tự động truyền sang API Get Order.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="bottom-banner"><b>Kết luận:</b> AI đóng vai trò loại bỏ thao tác setup nhàm chán, giải phóng thời gian
+        để QA tập trung 100% vào việc thiết kế Test Case chất lượng cao.</div>
+      <div class="footer">8 · Live Demo AI Generation</div>
+    </div>
+    <div class="navhint">Slide 8 / 15</div>
+
+
+    <div class="navhint">Slide 8 / 15</div>
+
+    <!-- SLIDE 2 : Contract Testing vs Integration Testing -->
+    <div class="slide">
+      <div class="topbar"></div>
+      <div class="breadcrumb">EShop Seminar · T06_API_and_Contract_Testing</div>
+      <div class="title">Integration Testing vs Contract Testing</div>
+      <div class="subtitle">Hiểu rõ vấn đề của Integration Test truyền thống và cách Contract Test (Pact) giải quyết.
+      </div>
+
+      <div class="cols" style="top:170px;">
+        <div class="col">
+          <div class="banner red">Integration Testing (E2E)</div>
+          <div class="cov-item">
+            <div class="h bad">Phức tạp &amp; Chậm chạp</div>
+            <div class="d">Cần môi trường thực (Database, APIs khác) chạy cùng lúc. Dễ xảy ra lỗi Flaky (chập chờn).
+            </div>
+          </div>
+          <div class="cov-item">
+            <div class="h bad">Tốn chi phí bảo trì</div>
+            <div class="d">Khi một service thay đổi, toàn bộ chuỗi test có thể thất bại, rất khó debug lỗi nằm ở đâu.
+            </div>
+          </div>
+          <div class="cov-item">
+            <div class="h warn">Phản hồi chậm</div>
+            <div class="d">Developer phải đợi CI/CD chạy xong toàn bộ hệ thống mới biết code mình có làm hỏng gì không.
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="banner green">Contract Testing (với Pact)</div>
+          <div class="cov-item">
+            <div class="h ok">Nhanh &amp; Độc lập</div>
+            <div class="d">Consumer và Provider được test tách biệt thông qua "Bản hợp đồng" (Pact file). Không cần
+              deploy cả 2.</div>
+          </div>
+          <div class="cov-item">
+            <div class="h ok">Phát hiện lỗi sớm</div>
+            <div class="d">Biết ngay lập tức nếu API thay đổi làm vỡ logic phía FE/Consumer ngay tại máy local.</div>
+          </div>
+          <div class="cov-item">
+            <div class="h ok">Tập trung vào giao tiếp</div>
+            <div class="d">Chỉ kiểm tra định dạng dữ liệu (Request/Response) truyền qua lại, bỏ qua logic nghiệp vụ rườm
+              rà.</div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">9 · Integration vs Contract Testing</div>
+    </div>
+    <div class="navhint">Slide 9 / 15</div>
+
+    <!-- SLIDE 3 : Consumer-Driven Contract (CDC) -->
+    <div class="slide">
+      <div class="topbar"></div>
+      <div class="breadcrumb">EShop Seminar · T06_API_and_Contract_Testing</div>
+      <div class="title">Cách Pact hoạt động: Consumer-Driven</div>
+      <div class="subtitle">Quy trình hướng Người tiêu dùng (Consumer-Driven Contract). Mọi thay đổi nên xuất phát từ
+        nhu cầu của FE/Client.</div>
+
+      <div class="cols">
+        <div class="col">
+          <div class="banner">Giai đoạn 1: Consumer (Ví dụ: Web UI)</div>
+          <div class="flow-row">
+            <div class="flow-num">1</div>
+            <div class="flow-body"><b>Viết Unit Test</b><br><span class="flow-desc">Định nghĩa mong đợi (Expectation) về
+                Request và Response</span></div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-num">2</div>
+            <div class="flow-body"><b>Chạy Test &amp; Tạo Mock</b><br><span class="flow-desc">Pact tạo Mock Server trả
+                về dữ liệu ảo cho FE</span></div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-num">3</div>
+            <div class="flow-body"><b>Sinh ra Contract (Pact File)</b><br><span class="flow-desc">File JSON chứa toàn bộ
+                quy tắc giao tiếp</span></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="banner blue">Giai đoạn 2: Provider (Ví dụ: Order API)</div>
+          <div class="flow-row">
+            <div class="flow-num">4</div>
+            <div class="flow-body"><b>Nhận Contract</b><br><span class="flow-desc">Provider lấy file JSON (từ Broker
+                hoặc File System)</span></div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-num">5</div>
+            <div class="flow-body"><b>Pact Replay</b><br><span class="flow-desc">Pact giả lập Consumer gửi Request thực
+                tới Provider</span></div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-num">6</div>
+            <div class="flow-body"><b>Xác thực &amp; So sánh</b><br><span class="flow-desc">Kiểm tra Response có khớp
+                với hợp đồng hay không</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">10 · Consumer-Driven Contract (CDC)</div>
+    </div>
+    <div class="navhint">Slide 10 / 15</div>
+
+    <!-- SLIDE 4 : Pact Failure Modes (table) -->
+    <div class="slide">
+      <div class="topbar"></div>
+      <div class="breadcrumb">EShop Seminar · T06_API_and_Contract_Testing</div>
+      <div class="title red">Lưu ý khi sử dụng Pact (Best Practices)</div>
+      <div class="subtitle">Những điểm cần tránh để Contract Testing mang lại hiệu quả cao nhất.</div>
+
+      <table class="tbl" style="top:170px;">
+        <thead>
+          <tr>
+            <th class="red" style="width:230px;">Anti-pattern (Nên tránh)</th>
+            <th class="red">Giải thích &amp; Cách khắc phục</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="key">Dùng Pact cho Functional Test</td>
+            <td>Pact <b>không</b> dùng để test logic nghiệp vụ. Chỉ test định dạng dữ liệu, status code, headers. Đừng
+              nhồi nhét mọi Test Case vào Pact.</td>
+          </tr>
+          <tr>
+            <td class="key">Bỏ qua Provider States</td>
+            <td>Thiếu trạng thái ban đầu khiến Provider test hay thất bại. VD: Request thông tin User nhưng DB chưa có
+              User đó. <b>Giải pháp:</b> Định nghĩa rõ Provider State trong Contract.</td>
+          </tr>
+          <tr>
+            <td class="key">Public API chưa xác định Client</td>
+            <td>Pact tốt nhất cho nội bộ (Microservices, FE-BE chung công ty). Nếu build Public API cho bên thứ 3 vô
+              danh, dùng OpenAPI/Swagger Testing thì phù hợp hơn.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="bottom-banner"><b>Ghi nhớ:</b> Contract Testing nằm giữa Unit Test và E2E Test. Hãy tối ưu để tăng tốc
+        độ phát triển và CI/CD.</div>
+      <div class="footer">11 · Lưu ý khi dùng Pact</div>
+    </div>
+    <div class="navhint">Slide 11 / 15</div>
+
+    <!-- SLIDE 5 : Live Demo (table style + thank you banner) -->
+    <div class="slide">
+      <div class="topbar"></div>
+      <div class="breadcrumb">EShop Seminar · T06_API_and_Contract_Testing</div>
+      <div class="title">Demo Contract Testing với Pact</div>
+      <div class="subtitle">Live Demo · ~5 phút</div>
+      <div style="position:absolute; top:70px; right:52px;" class="banner red">🔔 [GHI CHÚ]: CHÈN VIDEO DEMO PACT VÀO
+        ĐÂY SAU</div>
+
+      <table class="tbl" style="top:170px;">
+        <thead>
+          <tr>
+            <th style="width:210px;">Bước</th>
+            <th>Nội dung</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="key">1. Consumer Test</td>
+            <td>Chạy Unit Test phía Web UI, mock API <code>GET /api/products</code> và sinh ra file
+              <code>web-ui-product-api.json</code>.
+            </td>
+          </tr>
+          <tr>
+            <td class="key">2. Chia sẻ Contract</td>
+            <td>Upload file Contract lên thư mục dùng chung hoặc hệ thống quản lý Pact Broker.</td>
+          </tr>
+          <tr>
+            <td class="key">3. Provider Verification</td>
+            <td>Phía Backend (Product API) kéo Contract về và chạy Verification Test đối chiếu.</td>
+          </tr>
+          <tr>
+            <td class="key">4. Break the Contract!</td>
+            <td>Thử đổi tên field <code>price</code> thành <code>product_price</code> ở Backend, chạy lại test để thấy
+              Provider Verification báo lỗi do vi phạm hợp đồng.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="footer">12 · Live Demo Contract Testing</div>
+    </div>
+    <div class="navhint">Slide 12 / 15</div>
+
+    <!-- SLIDE 6 : CI/CD Role -->
+    <div class="slide">
+      <div class="topbar"></div>
+      <div class="breadcrumb">EShop Seminar · T06_API_and_Contract_Testing</div>
+      <div class="title">Vai trò của CI/CD trong API &amp; Contract Testing</div>
+      <div class="subtitle">Đưa việc kiểm thử vào quy trình tự động hóa liên tục nhằm phát hiện lỗi sớm.</div>
+
+      <div class="cols" style="top:170px;">
+        <div class="col">
+          <div class="banner red">Vấn đề khi chạy thủ công</div>
+          <div class="cov-item">
+            <div class="h bad">Dễ bỏ sót kiểm thử</div>
+            <div class="d">Khi code thay đổi liên tục, việc chạy test thủ công dễ bị quên hoặc bỏ qua.</div>
+          </div>
+          <div class="cov-item">
+            <div class="h bad">Không đồng bộ môi trường</div>
+            <div class="d">Việc chạy test dưới máy cá nhân phụ thuộc vào cấu hình riêng, dễ phát sinh lỗi môi trường cục
+              bộ.</div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="banner green">Giải pháp từ CI/CD (GitHub Actions)</div>
+          <div class="cov-item">
+            <div class="h ok">Tự động kích hoạt (Trigger)</div>
+            <div class="d">Tự động chạy lại toàn bộ test suite (Newman v2 &amp; Pact) ngay khi push code hoặc tạo Pull
+              Request.</div>
+          </div>
+          <div class="cov-item">
+            <div class="h ok">Chốt chặn chất lượng (Quality Gate)</div>
+            <div class="d">Ngăn chặn gộp code lỗi hoặc phá vỡ hợp đồng (breaking changes) vào nhánh main trước khi
+              deploy.</div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">13 · Vai trò CI/CD</div>
+    </div>
+    <div class="navhint">Slide 13 / 15</div>
+
+    <!-- SLIDE 7 : Pipeline Design -->
+    <div class="slide">
+      <div class="topbar"></div>
+      <div class="breadcrumb">EShop Seminar · T06_API_and_Contract_Testing</div>
+      <div class="title">Thiết kế Pipeline trên GitHub Actions</div>
+      <div class="subtitle">Quy trình thực thi tự động tuần tự của job <code>test-api</code>.</div>
+
+      <div class="cols" style="top:170px;">
+        <div class="col">
+          <div class="banner">1. Sinh hợp đồng &amp; Khởi chạy</div>
+          <div class="flow-row">
+            <div class="flow-num">1</div>
+            <div class="flow-body"><b>Pact Consumer Tests</b><br><span class="flow-desc">Chạy consumer tests sinh ra
+                file contract JSON mới nhất.</span></div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-num">2</div>
+            <div class="flow-body"><b>Khởi động Backend Server</b><br><span class="flow-desc">Chạy server ngầm trên môi
+                trường CI (cổng 3000).</span></div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-num">3</div>
+            <div class="flow-body"><b>Wait for Server Ready</b><br><span class="flow-desc">Dùng wait-on thăm dò để đảm
+                bảo backend đã sẵn sàng.</span></div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="banner blue">2. Quét lỗi &amp; Đối chứng</div>
+          <div class="flow-row">
+            <div class="flow-num">4</div>
+            <div class="flow-body"><b>Newman API Testing</b><br><span class="flow-desc">Chạy bộ test API v2 quét toàn bộ
+                5 endpoints của EShop.</span></div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-num">5</div>
+            <div class="flow-body"><b>Pact Provider Verification</b><br><span class="flow-desc">Đối chứng backend thực
+                tế với các cam kết trong hợp đồng JSON.</span></div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-num">6</div>
+            <div class="flow-body"><b>Upload Artifacts</b><br><span class="flow-desc">Đóng gói và tải toàn bộ HTML/TXT
+                reports lên GitHub.</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">14 · Thiết kế Pipeline</div>
+    </div>
+    <div class="navhint">Slide 14 / 15</div>
+
+    <!-- SLIDE 8 : Automated Reports -->
+    <div class="slide">
+      <div class="topbar"></div>
+      <div class="breadcrumb">EShop Seminar · T06_API_and_Contract_Testing</div>
+      <div class="title">Demo tự động hóa kiểm thử (CI/CD)</div>
+      <div class="subtitle">Live Demo · ~3 phút</div>
+      <div style="position:absolute; top:70px; right:52px;" class="banner red">🔔 [GHI CHÚ]: CHÈN VIDEO DEMO CI/CD VÀO
+        ĐÂY SAU</div>
+
+      <table class="tbl" style="top:170px;">
+        <thead>
+          <tr>
+            <th style="width:210px;">Bước demo</th>
+            <th>Nội dung thực hiện</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="key">1. Tạo Pull Request</td>
+            <td>Push thay đổi code/test lên nhánh phụ và tạo PR để kích hoạt workflow tự động chạy.</td>
+          </tr>
+          <tr>
+            <td class="key">2. Quan sát Job log</td>
+            <td>Theo dõi các bước chạy tuần tự trên giao diện GitHub Actions log.</td>
+          </tr>
+          <tr>
+            <td class="key">3. Đọc báo cáo lỗi</td>
+            <td>Tải gói Artifacts <code>EShop-Test-Reports</code> về máy cá nhân, giải nén và kiểm tra báo cáo HTML /
+              TXT log.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="thanks-banner">Cảm ơn đã theo dõi · Sẵn sàng cho phần Q&amp;A</div>
+      <div class="footer">15 · Live Demo CI/CD</div>
+    </div>
+    <div class="navhint">Slide 15 / 15</div>
+
+  </div>
+</body>
+
+</html>

@@ -21,7 +21,7 @@
 | **Ngày:** | 2026-08-01 |
 | **Họ tên sinh viên:** | NHÓM 05 (Đại diện: Phạm Đức Toàn) |
 |  |  |
-| **MSSV:** | 23127540 |
+| **MSSV:** | 23127540 - 23127212 - 23127092 - 23127086 |
 
 ## **2\. Câu hỏi Khai báo**
 
@@ -70,11 +70,11 @@
 | Họ tên sinh viên (in hoa): | PHẠM ĐỨC TOÀN |
 | :---- | :---- |
 | **MSSV:** | 23127540 |
-| **Lớp / Khoá:** | 23CQ |
+| **Lớp / Khoá:** | 23KTPM2 |
 | **Môn học:** | CS423 / CSC13003 – Kiểm chứng Phần mềm |
-| **Giảng viên:** | (Giảng viên phụ trách) |
+| **Giảng viên:** | Mr. LÂM QUANG VŨ - Mr. HỒ TUẤN THANH |
 | **Ngày:** | 2026-08-01 |
-| **Chữ ký:** | PDT (Đã ký) |
+| **Chữ ký:** | PHẠM ĐỨC TOÀN |
 
 ## **Tham khảo**
 

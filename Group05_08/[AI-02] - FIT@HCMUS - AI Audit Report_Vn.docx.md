@@ -16,11 +16,11 @@
 | :---- | :---- |
 | **Họ tên sinh viên (in hoa):** | NHÓM 05 (Đại diện: PHẠM ĐỨC TOÀN) |
 | **MSSV:** | 23127540 |
-| **Lớp / Khoá:** | K23 |
+| **Lớp / Khoá:** | 23KTPM2 |
 | **Mã bài tập (ví dụ HW\#00, HW\#02):** |  |
 | **Ngày làm bài:** | 2026-07-31 |
 | **Công cụ AI đã dùng:** | Gemini 3.1 Pro, Gemini 3.5 Flash |
-| **Công cụ AI đã dùng:** | \[ \] Có  \[ \] Không |
+| **Công cụ AI đã dùng:** | \[ X\] Có  \[ \] Không |
 
 ## **2\. Hướng dẫn (đọc trước khi điền)**
 
@@ -84,10 +84,10 @@ Viết 80–150 chữ mô tả pattern quan sát được. AI mạnh ở đâu? 
 | Họ tên sinh viên (in hoa): |  |
 | :---- | :---- |
 | **MSSV:** | 23127540 |
-| **Lớp / Khoá:** | K23 |
+| **Lớp / Khoá:** | 23KTPM2 |
 | **Môn học:** | CS423 / CSC13003 – Kiểm chứng Phần mềm |
-| **Giảng viên:** |  |
-| **Ngày:** |  |
+| **Giảng viên:** | Mr. LÂM QUANG VŨ - Mr. HỒ TUẤN THANH |
+| **Ngày:** | 2026-08-01 |
 | **Chữ ký:** |  |
 
 ## **Tham khảo**
