@@ -18,17 +18,17 @@
 
 **Sinh viên đã thực hiện:** Kiểm thử lại toàn bộ Collection, sửa các lỗi kịch bản, tự căn chỉnh lời thoại demo. Cố tình thiết lập sai môi trường để kiểm chứng lại Failure Modes. Chủ trì tổng hợp báo cáo AI cho toàn nhóm (AI-02, AI-03, AI-04).
 
----
-
 ## Nguyễn Nhật Nam – 23127092
-
-
----
+- Fix lỗi hard-code trong Contract Testing: Bổ sung requestFilter vào cấu hình Pact Verifier để xử lý truyền Auth token động.
+- Cập nhật lại các Matchers trong script test của Consumer để đảm bảo bắt chặt lỗi Boundary Analysis.
 
 ## Nguyễn Quang Đăng Khoa – 23127212
-
+- Rà soát và fix lỗi False Positive nghiêm trọng ở API Checkout do AI sinh JSON Schema rỗng.
+- Bổ sung thuộc tính `required` vào validator và biên dịch các thuật ngữ lỗi sang tiếng Việt cho tài liệu User Guide.
 
 ## Huỳnh Sĩ Luân – 23127086
+- Sửa lỗi pipeline CI/CD trên GitHub Actions: Nâng cấp Node.js lên v20 và cấu hình lại cache dependencies.
+- Cập nhật điều kiện `if: always()` trong file `newman.yml` để đảm bảo luôn upload được HTML Report kể cả khi Newman test fail.
 
 ---
 
@@ -41,6 +41,7 @@ Chi tiết khai báo sử dụng AI của toàn bộ nhóm được tổng hợp
 
 # Tasks Planned for Next Week
 
+- Hoàn thành quay video demo trước ngày 05/08/2026
 - Chuẩn bị cho bữa seminar và kiểm tra lại các sản phẩm của nhóm
 
 ---
