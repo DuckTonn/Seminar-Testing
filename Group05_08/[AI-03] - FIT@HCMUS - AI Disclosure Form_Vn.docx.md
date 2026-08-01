@@ -44,7 +44,7 @@
 
 ### **3\. Prompt / nhiệm vụ chính cho AI:**
 
-- Tổng cộng 12 prompts từ 4 thành viên (Toàn, Nam, Khoa, Luân) ở Tuần 5 và Tuần 6.
+- Tổng cộng 12 prompts từ 4 thành viên (Toàn, Nam, Khoa, Luân).
 - Các tác vụ chính: setup JSON Postman v1/v2, viết Contract test bằng Pact, thiết lập CI/CD bằng GitHub Actions, sinh JSON Schema, phân tích lỗi Failure modes.
 - (Xem toàn văn 12 prompt tại Bảng AI Audit [AI-02]).
 
