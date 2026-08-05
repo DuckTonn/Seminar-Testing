@@ -27,13 +27,13 @@
   4. Bấm **Send**, sau đó chỉ vào tab **Test Results** (xanh rực). Quay lại tab **Variables** của Collection để thấy token đã tự động được điền vào.
 - **Thoại:** *"Điểm mạnh đầu tiên của Postman là khả năng viết script JavaScript. Ở API Login này, nhóm đã cài đặt để ngay khi login thành công, Postman sẽ tự động trích xuất Bearer Token và lưu vào Collection Variables (biến cấp Collection). Nhờ đó, tất cả các API phía sau như Giỏ hàng hay Thanh toán sẽ tự động được cấp quyền mà không cần copy/paste thủ công."*
 
-### Bước 3: Chạy Collection Runner & Demo Bắt Bug Backend (Khoảng 1 phút)
+### Bước 3: Chạy Collection Runner & Demo Tính Năng Data-Driven (Khoảng 1 phút)
 - **Hành động:**
   1. Click dấu `...` ở tên Collection, chọn **Run Collection**.
   2. Bấm nút **Run EShop Collection v2**.
-  3. Màn hình Summary chạy ra. Rất nhiều Pass (Màu xanh), nhưng lướt xuống dưới sẽ có một cái Fail (Màu đỏ) ở mục `POST /api/checkout`.
-  4. Click thẳng vào cái dòng màu đỏ đó để mở chi tiết lỗi.
-- **Thoại:** *"Tiếp theo, thay vì chạy tay từng cái, mình sử dụng Collection Runner để chạy hàng loạt toàn bộ kịch bản test. Như các bạn thấy, đa số là Pass. Tuy nhiên, ở API Checkout có một kịch bản bị Fail. Đây là kịch bản Negative - cố tình gửi `total_amount` rỗng. Kịch bản kỳ vọng Backend phải chặn lại và trả về lỗi 400 Bad Request, nhưng thực tế Backend lại trả về 200 OK và vẫn lưu vào database. Nhờ Postman, nhóm đã bắt được Bug thiếu Validate Data này của hệ thống (được đánh mã là Bug B4 trong báo cáo)."*
+  3. Màn hình Summary chạy ra với kết quả 100% Pass (Màu xanh) cho tất cả các request.
+  4. Lướt màn hình để cho khán giả thấy các script test hoạt động mượt mà.
+- **Thoại:** *"Tiếp theo, thay vì chạy tay từng cái, mình sử dụng Collection Runner để chạy hàng loạt toàn bộ kịch bản test. Như các bạn thấy, kết quả trả về là 100% Pass xanh lét. Điều này chứng tỏ kịch bản kiểm thử của mình đã bao phủ tốt và các endpoint hiện tại hoạt động đúng như mong đợi cho các luồng Happy Path và các kịch bản kiểm tra đã được thiết lập."*
 
 ### Bước 4: Demo một "Điểm mù" (Failure Mode) của Postman (Khoảng 45s)
 - **Hành động:** 
