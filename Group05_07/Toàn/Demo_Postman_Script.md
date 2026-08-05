@@ -37,10 +37,11 @@
 
 ### Bước 4: Demo một "Điểm mù" (Failure Mode) của Postman (Khoảng 45s)
 - **Hành động:** 
-  1. Đóng Runner, mở request `GET /api/products/:id`.
-  2. Ở ô URL, đổi giá trị `id` thành số `2` (số chẵn sẽ kích hoạt Bug B1 trả về giá tiền dạng chuỗi).
-  3. Bấm **Send**. Bật sang tab **Test Results**, sẽ thấy báo lỗi Fail: `AssertionError: expected '28000000' to deeply equal 28000000`.
-- **Thoại:** *"Cuối cùng, mình xin demo một Điểm Mù (Failure mode) rất điển hình khi dùng công cụ này: Lỗi ép kiểu ngầm định. Ở API lấy chi tiết sản phẩm, Backend có một bug là ID chẵn sẽ trả về giá tiền kiểu Chuỗi (String) thay vì Số (Number). Khi Postman so sánh, nó báo lỗi rất mơ hồ là 'expected 28 triệu bằng 28 triệu'. Tester mới rất dễ bị ảo giác tưởng logic hệ thống sai, nhưng thực chất là sai kiểu dữ liệu. Điều này đòi hỏi Tester phải dùng strict equality (so sánh chặt) để Postman bắt lỗi chính xác hơn."*
+  1. Đóng Runner, mở request `3.1 Happy Path — Xem Chi Tiết Sản Phẩm (ID lẻ)`.
+  2. Ở ô URL, đổi giá trị `id` từ `1` thành số `2` (số chẵn sẽ kích hoạt Bug B1 trả về giá tiền dạng chuỗi).
+  3. Bật sang tab **Tests**, tạm thời xoá/comment dòng check ID (`pm.expect(jsonData.id).to.eql(1);`) để nó không báo lỗi ID. Sửa dòng check price thành: `pm.expect(jsonData.price).to.eql(28000000);`.
+  4. Bấm **Send**. Bật sang tab **Test Results**, sẽ thấy báo lỗi Fail ở test price: `AssertionError: expected '28000000' to deeply equal 28000000`.
+- **Thoại:** *"Cuối cùng, mình xin demo một Điểm Mù (Failure mode) rất điển hình khi dùng công cụ này: Lỗi ép kiểu ngầm định. Ở API lấy chi tiết sản phẩm, Backend có một bug là ID chẵn sẽ trả về giá tiền kiểu Chuỗi (String) thay vì Số (Number). Khi dùng lệnh so sánh .eql() trong Postman, nó báo lỗi rất mơ hồ là 'expected 28 triệu bằng 28 triệu'. Khán giả nhìn kỹ sẽ thấy có dấu nháy đơn ở vế đầu. Tester mới rất dễ bị ảo giác tưởng logic hệ thống sai, nhưng thực chất là sai kiểu dữ liệu. Điều này đòi hỏi Tester phải dùng strict equality hoặc hàm kiểm tra type explicit (.to.be.a('number')) để Postman bắt lỗi minh bạch hơn."*
 
 ### Bước 5: Kết thúc (Khoảng 10s)
 - **Hành động:** Trở lại màn hình chính của Postman.
