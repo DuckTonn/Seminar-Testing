@@ -2,7 +2,7 @@
 
 Tài liệu này lưu trữ các câu lệnh (prompts) được thiết kế đặc biệt để tối ưu hóa khả năng sinh test case của AI (ChatGPT/Gemini/Claude). Các prompt được chia theo từng chiến lược nhằm khắc phục những điểm yếu cố hữu của AI (thiếu Edge Cases, Schema Validation hời hợt, không biết nối chuỗi request, v.v.).
 
-> **Lưu ý chung:** Trong tất cả các prompt dưới đây, luôn đính kèm **[Đặc tả API - api_specification.md]** ở cuối câu lệnh để AI có ngữ cảnh.
+> **Lưu ý chung:** Trong tất cả các prompt dưới đây, luôn đính kèm **[Đặc tả API - api_specification.md]** ở cuối câu lệnh để AI có ngữ cảnh. Khi yêu cầu AI sinh Postman Collection, phải ép AI bao phủ đầy đủ các nhóm API trong đặc tả, không được chỉ sinh một vài request mẫu hoặc rút gọn quá mức.
 
 ---
 
@@ -12,9 +12,26 @@ Tài liệu này lưu trữ các câu lệnh (prompts) được thiết kế đ�
 > "Đóng vai trò là một QA Automation Engineer Senior. Dựa vào Đặc tả API được cung cấp, hãy tạo một file JSON tuân thủ chuẩn Postman Collection Schema v2.1.0. 
 > Yêu cầu:
 > - Cài đặt collection variable: `baseUrl` (http://localhost:3000) và `token` (rỗng).
+> - Bao phủ đầy đủ các API được mô tả trong `api_specification.md`, ít nhất một request cho mỗi nhóm chính: Authentication, Users, Products/Categories, Cart/Orders, Coupons, Admin.
+> - Không được chỉ sinh vài request mẫu; nếu đầu ra dài thì chia thành nhiều folder nhưng vẫn phải đủ endpoint quan trọng, header, body và tests tương ứng.
 > - Tạo request `POST /api/login`: Test status 200, response time < 500ms, trích xuất và lưu `token` vào biến môi trường.
 > - Tạo request `POST /api/cart`: Test status 200. Gắn Bearer Token tự động từ biến.
+> - Tạo thêm request đại diện cho các endpoint còn lại theo đặc tả nếu chúng chưa được bao phủ bởi hai request trên.
 > - Trả về ĐÚNG 1 khối mã JSON duy nhất, không giải thích."
+
+---
+
+## 8. Prompt Sinh Collection Phủ Đủ API Spec
+**Mục đích:** Dùng khi AI có xu hướng sinh prompt quá ngắn hoặc bỏ sót endpoint. Prompt này buộc đầu ra phải bám sát toàn bộ đặc tả API thay vì chỉ chọn vài request điển hình.
+
+> "Đóng vai trò là Senior QA Automation Engineer. Dựa trên file `api_specification.md`, hãy tạo một Postman Collection JSON v2.1.0 bao phủ đầy đủ hệ thống EShop.
+> Yêu cầu bắt buộc:
+> - Phải tạo request cho tất cả nhóm nghiệp vụ trong đặc tả: Authentication, Users, Products, Categories, Cart, Orders, Coupons, Admin.
+> - Mỗi endpoint quan trọng phải có ít nhất một request đại diện, gồm cả luồng thành công và các luồng kiểm tra quyền truy cập nếu có áp dụng token.
+> - Với mỗi request, phải khai báo đầy đủ method, URL, header, body, và test script cơ bản phù hợp với mô tả trong API spec.
+> - Không được lược bỏ endpoint chỉ vì thấy chúng là CRUD quen thuộc hoặc ít thay đổi; nếu cần, hãy chia thành nhiều folder để vẫn giữ đủ coverage.
+> - Nếu collection quá dài, ưu tiên chia nhỏ hợp lý nhưng tuyệt đối không rút gọn nội dung.
+> - Trả về duy nhất một khối JSON hợp lệ, không kèm giải thích, không kèm văn bản thừa."
 
 ---
 
