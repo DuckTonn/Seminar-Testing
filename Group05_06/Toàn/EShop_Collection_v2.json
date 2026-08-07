@@ -1,6 +1,6 @@
 {
   "info": {
-    "name": "EShop Collection v3",
+    "name": "EShop Collection v2",
     "description": "API Test collection cho dự án EShop (Tuần 2) với Negative, Edge cases và Expected Behavior Assertions",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
