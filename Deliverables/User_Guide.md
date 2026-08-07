@@ -71,7 +71,7 @@ Thay vì chạy từng API thủ công, bạn có thể chạy toàn bộ kịch
 3. Màn hình Runner sẽ hiện ra, liệt kê toàn bộ các requests. Bạn có thể giữ nguyên cài đặt mặc định (Iterations: 1, Delay: 0).
 4. Nhấn nút **Run EShop Collection v2**.
 5. Đọc bảng tóm tắt kết quả (Run Summary): Postman sẽ báo có bao nhiêu test passed (xanh) và bao nhiêu test failed (đỏ). 
-   - Những test failed có thể là do API backend có lỗi (đã được ghi chú là "Bug" trong tên request).
+   - Những test failed là do API backend có lỗi (thiếu validation dữ liệu), không vượt qua được các kịch bản kiểm tra nghiêm ngặt của bộ test.
 
 ---
 
