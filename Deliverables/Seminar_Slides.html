@@ -718,6 +718,10 @@
             <td>Mặc định mọi API đều dùng chung 1 <code>{{token}}</code>. AI không có tư duy test phân quyền chéo (Ví
               dụ: Dùng tài khoản User thường gọi API Xóa của Admin).</td>
           </tr>
+          <tr>
+            <td class="key">Toán tử lỏng lẻo (==)</td>
+            <td>Dùng <code>==</code> thay vì <code>===</code> khiến JavaScript tự ép kiểu (VD: chuỗi "28000" == số 28000). Điều này che giấu lỗi Backend trả về sai định dạng dữ liệu, dẫn đến False Positive.</td>
+          </tr>
         </tbody>
       </table>
 
@@ -896,9 +900,8 @@
               User đó. <b>Giải pháp:</b> Định nghĩa rõ Provider State trong Contract.</td>
           </tr>
           <tr>
-            <td class="key">Public API chưa xác định Client</td>
-            <td>Pact tốt nhất cho nội bộ (Microservices, FE-BE chung công ty). Nếu build Public API cho bên thứ 3 vô
-              danh, dùng OpenAPI/Swagger Testing thì phù hợp hơn.</td>
+            <td class="key">Hardcode Token khi Verify</td>
+            <td>Mock cứng Token khiến quá trình Provider Verification liên tục thất bại do Token hết hạn. <b>Giải pháp:</b> Sử dụng tính năng <code>requestFilter</code> trong Pact để tự động chèn Token thật/động vào Header mỗi khi chạy Verify.</td>
           </tr>
         </tbody>
       </table>
@@ -1029,8 +1032,7 @@
           </div>
           <div class="flow-row">
             <div class="flow-num">6</div>
-            <div class="flow-body"><b>Upload Artifacts</b><br><span class="flow-desc">Đóng gói và tải toàn bộ HTML/TXT
-                reports lên GitHub.</span></div>
+            <div class="flow-body"><b>Upload Artifacts</b><br><span class="flow-desc">Sử dụng cờ <code>if: always()</code> để đảm bảo luôn xuất và tải được file report (Log/HTML) thành công lên GitHub kể cả khi bước test trước đó bị FAIL.</span></div>
           </div>
         </div>
       </div>
