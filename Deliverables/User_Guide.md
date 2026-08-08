@@ -7,14 +7,15 @@
 
 ## Mục lục
 1. [Tóm tắt Cấp cao & Kiến trúc Hệ thống (Executive Summary)](#1-tóm-tắt-cấp-cao--kiến-trúc-hệ-thống)
-2. [Nền tảng Lý thuyết & Chiến lược Kiểm thử (Theoretical Foundations)](#2-nền-tảng-lý-thuyết--chiến-lược-kiểm-thử)
-3. [Yêu cầu Hệ thống & Thiết lập Môi trường (Prerequisites & Setup)](#3-yêu-cầu-hệ-thống--thiết-lập-môi-trường)
-4. [Kiểm thử API Chuyên sâu với Postman (Manual & Scripted Testing)](#4-kiểm-thử-api-chuyên-sâu-với-postman)
-5. [Sinh kịch bản tự động bằng Trí tuệ Nhân tạo (AI-Augmented Generation)](#5-sinh-kịch-bản-tự-động-bằng-trí-tuệ-nhân-tạo)
-6. [Kiểm thử Hợp đồng Giao tiếp với Pact (Contract Testing)](#6-kiểm-thử-hợp-đồng-giao-tiếp-với-pact)
-7. [Tích hợp Liên tục (Continuous Integration với GitHub Actions)](#7-tích-hợp-liên-tục-với-github-actions)
-8. [Phân tích Điểm mù (Failure Modes - 3 Case Studies)](#8-phân-tích-điểm-mù-failure-modes---3-case-studies)
-9. [Đúc kết và Bài học Kinh nghiệm (Lessons Learned)](#9-đúc-kết-và-bài-học-kinh-nghiệm)
+2. [Nhập môn API Testing (Dành cho người mới)](#2-nhập-môn-api-testing-dành-cho-người-mới)
+3. [Nền tảng Lý thuyết & Chiến lược Kiểm thử (Theoretical Foundations)](#3-nền-tảng-lý-thuyết--chiến-lược-kiểm-thử)
+4. [Yêu cầu Hệ thống & Thiết lập Môi trường (Prerequisites & Setup)](#4-yêu-cầu-hệ-thống--thiết-lập-môi-trường)
+5. [Kiểm thử API Chuyên sâu với Postman (Manual & Scripted Testing)](#5-kiểm-thử-api-chuyên-sâu-với-postman)
+6. [Sinh kịch bản tự động bằng Trí tuệ Nhân tạo (AI-Augmented Generation)](#6-sinh-kịch-bản-tự-động-bằng-trí-tuệ-nhân-tạo)
+7. [Kiểm thử Hợp đồng Giao tiếp với Pact (Contract Testing)](#7-kiểm-thử-hợp-đồng-giao-tiếp-với-pact)
+8. [Tích hợp Liên tục (Continuous Integration với GitHub Actions)](#8-tích-hợp-liên-tục-với-github-actions)
+9. [Phân tích Điểm mù (Failure Modes - 3 Case Studies)](#9-phân-tích-điểm-mù-failure-modes---3-case-studies)
+10. [Đúc kết và Bài học Kinh nghiệm (Lessons Learned)](#10-đúc-kết-và-bài-học-kinh-nghiệm)
 
 ---
 
@@ -30,39 +31,59 @@ Sự kết hợp của 3 phương pháp này không chỉ bù trừ khuyết đi
 
 ---
 
-## 2. Nền tảng Lý thuyết & Chiến lược Kiểm thử
+## 2. Nhập môn API Testing (Dành cho người mới)
+
+Nếu bạn là người mới tiếp cận với lĩnh vực kiểm thử phần mềm, hãy tưởng tượng API giống như một **người phục vụ (waiter)** trong nhà hàng.
+- **Frontend (Website/App):** Là bạn, người ngồi xem thực đơn và gọi món.
+- **Backend (Database/Server):** Là nhà bếp, nơi chứa nguyên liệu và nấu ăn.
+- **API:** Người phục vụ chạy đi chạy lại giữa bạn và nhà bếp. Bạn yêu cầu "Cho tôi 1 ly cafe" (Request), người phục vụ mang thông tin vào bếp, bếp làm xong, người phục vụ mang ly cafe ra cho bạn (Response).
+
+**Vậy API Testing là gì?**
+Thay vì bạn phải dùng Website (nhấn nút Mua hàng) để nhờ người phục vụ, bạn có thể tự mình viết các đoạn lệnh để "nói chuyện" trực tiếp với người phục vụ đó. Việc này giúp bạn kiểm tra xem nhà bếp có làm đúng món không, có tính nhầm tiền không, *trước cả khi Website được thiết kế xong*.
+
+**Tại sao chúng ta phải test API?**
+Nếu không test kỹ, một lỗi tính toán tiền ở nhà bếp (Backend) có thể khiến toàn bộ khách hàng mua đồ với giá 0 đồng, gây thiệt hại hàng tỷ đồng cho công ty.
+
+**Làm sao để bắt đầu?**
+1. Bạn cần một công cụ gọi là **Postman** (hoặc Insomnia). Đây là nơi bạn nhập các "yêu cầu" (Request) để gửi cho API.
+2. Bạn cần biết địa chỉ của API (ví dụ: `http://localhost:3000/api/login`).
+3. Bạn gửi yêu cầu và nhận kết quả trả về, so sánh xem kết quả có đúng như mong đợi không. (Ví dụ: Đăng nhập sai mật khẩu thì API phải trả về lỗi 401 chứ không phải là cho phép vào).
+
+---
+
+## 3. Nền tảng Lý thuyết & Chiến lược Kiểm thử
 *(Dựa trên lý thuyết cốt lõi từ sách "Testing Web APIs" của tác giả Mark Winteringham và tài liệu chính thức của Pact)*
 
-### 2.1 Chiến lược kiểm thử dựa trên rủi ro (Risk-Driven Testing - Chapter 4)
+### 3.1 Chiến lược kiểm thử dựa trên rủi ro (Risk-Driven Testing - Chapter 4)
 Theo Mark Winteringham, kiểm thử toàn bộ 100% các API là một sự lãng phí tài nguyên và không thực tế trong các chu kỳ Agile ngắn hạn. Thay vào đó, nhóm đã áp dụng **Chiến lược kiểm thử dựa trên rủi ro (Risk-Driven Testing)** để phân loại và ưu tiên các endpoint của EShop:
 
 - **Rủi ro mức độ Cao (High Risk):** `POST /api/checkout` và `POST /api/apply-coupon`. Đây là các API liên quan trực tiếp đến luồng thanh toán và dòng tiền. Nếu logic trừ tiền sai, hậu quả business là cực kỳ nghiêm trọng. Đối với nhóm này, test case phải bao phủ toàn bộ Happy Path, Negative Path (nhập coupon sai, nhập mã hết hạn) và Edge Cases (nhập số tiền âm, spam request).
 - **Rủi ro mức độ Trung bình (Medium Risk):** `POST /api/cart` (Thêm vào giỏ). Nếu lỗi, người dùng bị gián đoạn trải nghiệm mua sắm. Cần test kiểm tra số lượng tồn kho (inventory boundary).
 - **Rủi ro mức độ Thấp (Low Risk):** `GET /api/categories`. API này chỉ đọc dữ liệu tĩnh, rất hiếm khi thay đổi. Chỉ cần test Happy Path để đảm bảo Status 200 và cấu trúc mảng trả về là đủ.
 
-### 2.2 Tự động hóa trong Continuous Integration (Chapter 9)
+### 3.2 Tự động hóa trong Continuous Integration (Chapter 9)
 Một bộ test tốt nhất thế giới cũng trở nên vô dụng nếu nó chỉ chạy trên máy cá nhân của Developer. Winteringham nhấn mạnh tầm quan trọng của việc đưa API Test vào hệ thống CI/CD để tạo ra **Vòng lặp phản hồi nhanh (Fast Feedback Loop)**.
 Bằng cách cô lập môi trường (Sử dụng Database test riêng biệt, chạy server dưới dạng background service trên GitHub Actions), chúng ta đảm bảo rằng:
 1. Môi trường chạy test là "sạch" (Clean State).
 2. Mọi thay đổi code của Developer đều phải đi qua "chốt chặn" API Test trước khi được phép merge vào nhánh `main`.
 
-### 2.3 Lý thuyết Contract Testing (Pact Provider Verification)
+### 3.3 Lý thuyết Contract Testing (Pact Provider Verification)
 Pact hoạt động dựa trên nguyên lý **Consumer-Driven Contracts (Hợp đồng do người tiêu dùng dẫn dắt)**. Thay vì Backend định nghĩa trả về cái gì, Frontend sẽ định nghĩa *"Tôi cần cái gì"*.
 - **Pact Broker:** Là máy chủ trung tâm lưu trữ các bản hợp đồng JSON.
 - **Provider Verification:** Backend (EShop API) sẽ tải hợp đồng này về. Công cụ Pact sẽ giả lập các request hệt như Frontend đã yêu cầu và kiểm tra xem Backend có trả về đúng cấu trúc (schema) và định dạng dữ liệu (types) hay không. Điểm khác biệt lớn nhất giữa Pact và Postman là Pact KHÔNG quan tâm đến giá trị thực (Ví dụ: `price: 10000`), Pact chỉ quan tâm đó có phải là kiểu số nguyên (Integer) hay không.
 
 ---
 
-## 3. Yêu cầu Hệ thống & Thiết lập Môi trường
+## 4. Yêu cầu Hệ thống & Thiết lập Môi trường
 
-### 3.1 Cài đặt phần mềm
+### 4.1 Cài đặt phần mềm
 Đảm bảo máy trạm của bạn đã được cài đặt:
 - **Node.js (v16+):** Runtime để chạy EShop backend và Jest.
 - **npm hoặc yarn:** Trình quản lý thư viện.
 - **Postman Desktop Client:** (Hoặc dùng bản Web) để chạy API test thủ công.
 - **Newman:** Cài đặt toàn cục qua lệnh `npm install -g newman`.
 
-### 3.2 Khởi động hệ thống Backend (SUT - System Under Test)
+### 4.2 Khởi động hệ thống Backend (SUT - System Under Test)
 1. Mở Terminal / PowerShell.
 2. Clone repository của nhóm về máy.
 3. Di chuyển vào thư mục mã nguồn: `cd eshop-sut/backend`
@@ -72,17 +93,25 @@ Pact hoạt động dựa trên nguyên lý **Consumer-Driven Contracts (Hợp �
 
 ---
 
-## 4. Kiểm thử API Chuyên sâu với Postman
+## 5. Kiểm thử API Chuyên sâu với Postman
 Đây là phương pháp kiểm thử cốt lõi (Traditional Tool). Chúng tôi không chỉ dùng Postman để gửi các request rời rạc, mà sử dụng **Postman Sandbox** (môi trường thực thi JavaScript) để mô phỏng một chuỗi hành vi người dùng cực kỳ phức tạp.
 
-### 4.1 Khái niệm về Variables & Environments
+### 5.0 Hướng dẫn Step-by-step cho người mới (Chạy thử API đầu tiên)
+Nếu bạn vừa mới cài Postman, hãy làm theo 4 bước cực nhanh sau đây để test thử API lấy danh sách sản phẩm:
+1. **Mở Postman**, bấm dấu `+` để tạo một Request mới.
+2. Đổi phương thức thành `GET` (mặc định đã là GET).
+3. Nhập đường dẫn vào thanh URL: `http://localhost:3000/api/products`
+4. Bấm nút **Send** màu xanh dương.
+*Kết quả:* Bạn sẽ thấy một bảng dữ liệu (JSON) hiện ra bên dưới chứa danh sách các sản phẩm (Laptop, Chuột, Bàn phím...). Chúc mừng, bạn vừa thực hiện thành công API Test đầu tiên của mình!
+
+### 5.1 Khái niệm về Variables & Environments
 Để test không bị gắn cứng (hardcode) với máy local, toàn bộ đường dẫn được cấu hình dưới dạng biến `{{baseUrl}}`.
 Tạo một Environment tên là `EShop_Local` với các biến:
 - `baseUrl`: `http://localhost:3000/api`
 - `token`: (Để trống, sẽ được script tự động điền)
 - `order_id`: (Để trống)
 
-### 4.2 Lập trình Request Chaining (Gọi luồng liên hoàn)
+### 5.2 Lập trình Request Chaining (Gọi luồng liên hoàn)
 Một trong những kỹ thuật mạnh nhất của Postman là trích xuất dữ liệu từ Response của API trước, làm đầu vào (Input) cho API sau.
 **Kịch bản mô phỏng:** Đăng nhập -> Thêm sản phẩm vào giỏ -> Lấy giỏ hàng.
 
@@ -107,7 +136,7 @@ if (jsonData.token) {
 **Bước 2: API Thêm giỏ hàng (`POST /cart`)**
 Ở tab **Authorization**, cấu hình Type là `Bearer Token`, và mục Token điền `{{token}}`. Hệ thống sẽ tự lấy Token vừa lưu ở Bước 1 để xác thực.
 
-### 4.3 Viết Data-Driven & Edge Case Assertions
+### 5.3 Viết Data-Driven & Edge Case Assertions
 Trong tab **Tests** của API `POST /apply-coupon`, nhóm viết logic kiểm tra toán học khắt khe nhằm chống lại lỗi business logic (Chương 4 của Winteringham):
 ```javascript
 pm.test("Toán học: Tiền giảm giá phải chính xác", function () {
@@ -130,29 +159,29 @@ pm.test("Toán học: Tiền giảm giá phải chính xác", function () {
 
 ---
 
-## 5. Sinh kịch bản tự động bằng Trí tuệ Nhân tạo
+## 6. Sinh kịch bản tự động bằng Trí tuệ Nhân tạo
 Sử dụng AI không nhằm mục đích "thay thế" Tester, mà để tự động hóa khâu tạo Boilerplate (mã lặp lại). Nhóm sử dụng mô hình "Spec-to-Test Generation".
 
-### 5.1 Kỹ thuật Prompt Engineering
+### 6.1 Kỹ thuật Prompt Engineering
 Để AI (Claude/ChatGPT) sinh ra bộ test Postman có thể chạy được ngay, nhóm không dùng prompt chung chung. Nhóm sử dụng kỹ thuật **Zero-shot with Context Injection**.
 **Cấu trúc Prompt:**
 > "Tôi có một file OpenAPI specification của hệ thống EShop (dán nội dung file `api_specification.md` vào đây). Dựa vào đặc tả này, hãy sinh cho tôi một file Postman Collection v2.1.0 chuẩn JSON. 
 > Yêu cầu: Bao gồm tất cả các endpoints. Đối với các API POST/PUT, hãy tạo sẵn Body JSON giả lập. Tại mỗi API, hãy viết sẵn một test script kiểm tra status code 200 bằng cú pháp `pm.test`."
 
-### 5.2 Quá trình Tinh chỉnh (Refining the Scaffold)
+### 6.2 Quá trình Tinh chỉnh (Refining the Scaffold)
 Khi AI nhả ra file `.json` và import vào Postman, nhóm nhận thấy tốc độ hoàn thành là dưới 1 phút (Nhanh gấp 10 lần gõ tay). Tuy nhiên, AI gặp phải hiện tượng **Happy-Path Bias** (Thiên kiến luồng chuẩn):
 - AI chỉ sinh các trường hợp tài khoản đúng, mật khẩu đúng, coupon hợp lệ.
 - QA của nhóm phải trực tiếp vào tab **Tests** để thiết kế các kịch bản Negative (Ví dụ: Bắn payload chữ cái vào trường tính tiền `total_amount: "hai mươi ngàn"` để ép API văng lỗi 400 Bad Request, và dùng Postman verify rằng API thực sự văng lỗi 400 chứ không văng 500 sập server).
 
 ---
 
-## 6. Kiểm thử Hợp đồng Giao tiếp với Pact
+## 7. Kiểm thử Hợp đồng Giao tiếp với Pact
 Nếu như Postman dùng để test Logic, thì Pact dùng để test Cấu trúc Dữ liệu (Schema/Contract).
 
-### 6.1 Tổng quan về Provider Verification
+### 7.1 Tổng quan về Provider Verification
 Đề bài yêu cầu triển khai luồng Provider Verification cho Node backend. Ở bước này, Backend (Provider) đóng vai trò bị động: Nó đứng yên, chờ công cụ Pact đọc file hợp đồng `.json` (do Frontend - Consumer tạo ra từ trước) và bắn request vào.
 
-### 6.2 Thiết lập Provider States (Quản lý trạng thái)
+### 7.2 Thiết lập Provider States (Quản lý trạng thái)
 Đây là phần khó nhất của Contract Testing. Trong hợp đồng, Frontend yêu cầu: *"Khi tôi gửi ID = 1, anh phải trả về tên sản phẩm"*. 
 Nhưng nếu Database test đang trống rỗng thì API sẽ văng 404 Not Found, dẫn đến Fail hợp đồng dù API không hề code sai!
 **Cách giải quyết:** Nhóm lập trình các `stateHandlers` trong file `provider.test.js`.
@@ -190,10 +219,10 @@ Như thấy ở code trên, hàm `requestFilter` là cứu cánh cực kỳ quan
 
 ---
 
-## 7. Tích hợp Liên tục với GitHub Actions
+## 8. Tích hợp Liên tục với GitHub Actions
 Mọi đoạn script trên máy cá nhân đều không có ý nghĩa nếu code lỗi vẫn được merge vào server chính. Nhóm đã tích hợp toàn bộ Postman (thông qua Newman) và Pact vào file `.github/workflows/test.yml`.
 
-### 7.1 Luồng CI/CD Pipeline
+### 8.1 Luồng CI/CD Pipeline
 1. Cài đặt Node.js v16 trên Ubuntu server của GitHub.
 2. Chạy lệnh `npm ci` để cài thư viện.
 3. Kích hoạt Backend chạy ngầm: `node server.js &` (Dấu `&` giúp server chạy ở background mà không làm treo pipeline).
@@ -201,7 +230,7 @@ Mọi đoạn script trên máy cá nhân đều không có ý nghĩa nếu code
 5. Chạy Newman: `newman run EShop_Collection_v2.json -e EShop_Environment.json --reporters cli,htmlextra`
 6. Chạy Pact: `npm run test:pact`
 
-### 7.2 Cấu hình Báo cáo Đẹp (HTML Extra) & Artifacts
+### 8.2 Cấu hình Báo cáo Đẹp (HTML Extra) & Artifacts
 Sử dụng plugin `newman-reporter-htmlextra`, báo cáo xuất ra không chỉ là những dòng text nhàm chán mà là một giao diện Dashboard cực đẹp.
 Để lấy được file báo cáo kể cả khi luồng bị gãy (Failed), nhóm cấu hình block `if: always()`:
 ```yaml
@@ -216,7 +245,7 @@ Developer chỉ cần vào giao diện GitHub Actions, tải file Zip chứa rep
 
 ---
 
-## 8. Phân tích Điểm mù (Failure Modes - 3 Case Studies)
+## 9. Phân tích Điểm mù (Failure Modes - 3 Case Studies)
 Đây là phần cốt lõi chứng minh tính thực tiễn của đồ án. Máy móc/Công cụ đôi khi "nói dối" và khiến kỹ sư kiểm thử (QA) rơi vào cái bẫy False Positive (Tưởng là đúng nhưng thực ra là sai). Dưới đây là 3 "cú lừa" kinh điển:
 
 ### Case Study 1 (Postman): Cái bẫy Silent Failure trong Sandbox
@@ -244,7 +273,7 @@ Developer chỉ cần vào giao diện GitHub Actions, tải file Zip chứa rep
 
 ---
 
-## 9. Đúc kết và Bài học Kinh nghiệm
+## 10. Đúc kết và Bài học Kinh nghiệm
 Quãng thời gian 2 tháng nghiên cứu và triển khai đề tài T06 mang lại cái nhìn sâu sắc cho toàn nhóm về hệ sinh thái QA hiện đại.
 1. **Tooling không phải là tất cả:** Postman hay Karate chỉ là công cụ. Tư duy thiết kế test (Test Design Thinking) để tìm ra các Edge Cases mới là yếu tố quyết định chất lượng phần mềm.
 2. **AI là Trợ lý, không phải Trọng tài:** Việc nhắm mắt tin tưởng đoạn code do AI sinh ra là con đường ngắn nhất dẫn đến thảm họa False Positives trên production. Human-in-the-loop là quy trình bắt buộc.
