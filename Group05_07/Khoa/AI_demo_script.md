@@ -1,30 +1,97 @@
-# Kịch Bản Quay Video Demo (Phần AI Test Generation)
-**Thời lượng dự kiến:** 2 - 3 phút
-**Mục tiêu:** Thực hiện cách kết hợp AI tạo Boilerplate nhanh, tìm lỗi False Positive của AI và cách dùng Prompt đặc trị (Request Chaining).
+# Kịch Bản Demo: AI-Augmented API Testing
+**Thời lượng:** ~3 phút  
+**Đối tượng:** Người chưa biết gì về AI testing  
+**Môi trường:** Agent IDE (Cursor/VS Code + Claude/ChatGPT) mở tại thư mục repo SUT
 
 ---
-## Chuẩn bị trước khi quay
-1. Mở sẵn AI có nạp sẵn file Đặc tả API hệ thống EShop.
-2. Mở Postman, chuẩn bị sẵn một Workspace trống.
-3. Copy sẵn các đoạn prompt chuẩn bị dùng.
+
+## Trước khi bắt đầu quay
+
+**Chuẩn bị sẵn trên màn hình:**
+1. Agent IDE đang mở tại thư mục gốc của repo SUT (eshop backend).
+2. File `api_specification.md` đã được mở trong IDE.
+3. Postman Desktop đang chạy, chuẩn bị workspace trống.
+4. File `prompt_AI.md` mở sẵn ở tab bên cạnh để copy-paste nhanh.
 
 ---
-## Kịch Bản Chi Tiết
 
-### Bước 1: Mở đầu & Giới thiệu (15s)
-- **Thoại:** "Tiếp nối phần API Testing của Toàn, mình là Khoa sẽ demo cách nhóm áp dụng AI để tăng tốc độ viết script, đồng thời chỉ ra những điểm mù nguy hiểm khi dùng AI sinh test tự động."
+## Bước 0 — Mở đầu & Bối cảnh (15 giây)
 
-### Bước 2: Khởi tạo cực nhanh bằng AI (45s)
-- **Hành động:** Paste prompt Boilerplate vào AI. Lấy file JSON kết quả import vào Postman. 
-- **Thoại:** "Thay vì tốn hàng giờ setup thủ công, mình chỉ mất chưa tới 1 phút dùng AI để sinh toàn bộ khung Postman Collection chuẩn v2.1.0 từ API Spec."
+**[Camera nhìn vào màn hình IDE]**
 
-### Bước 3: Chỉ ra Failure Mode - False Positive (45s)
-- **Hành động:** Mở API `POST /api/checkout` mà AI vừa sinh. Bấm tab Scripts cho thấy màn hình trống rỗng khi AI không gen ra script cho API này. Thêm  Bấm Send. Chỉ vào tab Test Results 1/1 (màu xanh PASS) -> Bôi đen đoạn "properties": {} trên dòng 3.
-- **Thoại:** "Tuy nhiên, đây chính là điểm hạn chế cố hữu khi để AI sinh test tự động. Các bạn có thể thấy ở API Checkout này, AI chỉ tạo ra phần Body request chứ tab Scripts hoàn toàn trống rỗng. Nếu QA thiếu kinh nghiệm chỉ bấm Send, thấy Backend trả về HTTP 200 OK rồi vội kết luận API đã chạy đúng, thì hệ thống rất dễ rơi vào tình trạng False Positive. Bởi vì nếu Backend bị lỗi logic trả về data rỗng hay thiếu trường quan trọng, Postman vẫn sẽ nhận về Status 200 và báo Pass. Việc thiếu đi các bước validate Schema và dữ liệu chi tiết trong tab Scripts sẽ tạo ra cảm giác an toàn giả cực kỳ nguy hiểm cho cả đội ngũ."
+> **Thoại:** "Mình đang đứng tại thư mục repo của hệ thống EShop — đây chính là SUT, hệ thống chúng ta cần kiểm thử. Thay vì gõ từng API request tốn hàng giờ, mình sẽ dùng AI Agent ngay bên trong IDE này để sinh ra bộ test Postman trong chưa đầy 1 phút. Và sau đó — mình sẽ chỉ cho bạn thấy tại sao bạn không nên tin hoàn toàn vào AI."
 
-### Bước 4: Khắc phục bằng Prompt Request Chaining (45s)
-- **Hành động:** Copy mẫu prompt "Request Chaining" thả vào AI để ép nó sửa lại API Checkout và Get Order. Import code mới vào Postman, chạy thử để thấy `order_id` được tự động gán qua API sau.
-- **Thoại:** "Để khắc phục, nhóm áp dụng chiến lược 'Human-in-the-loop'. Mình dùng một câu prompt đặc trị từ thư viện, ép AI phải viết script trích xuất `order_id` lưu vào biến môi trường, tự động truyền sang API Get Order. Như các bạn thấy, giờ các API đã liên kết logic với nhau."
+---
 
-### Bước 5: Kết thúc (10s)
-- **Thoại:** "Tổng kết lại, AI là công cụ sinh code xuất sắc, nhưng không thay thế được tư duy của QA. Tiếp theo, xin mời Nam trình bày về Contract Testing với Pact."
+## Bước 1 — Mô tả ngữ cảnh & Chạy Prompt 1 (45 giây)
+
+**[Hành động]: Mở chat agent trong IDE (ví dụ: Cursor Composer). Paste `Prompt 1` từ `prompt_AI.md` vào — kèm theo nội dung file `api_specification.md` đính kèm bên dưới.**
+
+> **Thoại:** "Đây là Prompt 1 từ Thư viện Prompt của nhóm — mình ép AI đóng vai Senior QA Engineer. Quan trọng là mình đính kèm toàn bộ API Specification của hệ thống — đây là nguyên liệu để AI hiểu hệ thống đang có gì, thay vì bịa đặt."
+
+**[Hành động]: Nhấn Enter. Chờ AI trả ra khối JSON. Copy toàn bộ khối JSON.**
+
+> **Thoại:** "Trong chưa đầy 1 phút, AI đã phân tích toàn bộ đặc tả và sinh ra một Postman Collection hoàn chỉnh — có đủ các nhóm API, header xác thực, body JSON, và test script cơ bản."
+
+**[Hành động]: Mở Postman → Import → Paste Raw Text → Import. Collection xuất hiện với đầy đủ folder và request.**
+
+> **Thoại:** "Bộ test skeleton đã vào Postman. Công việc tốn hàng giờ nếu làm tay, AI làm xong trong 60 giây."
+
+---
+
+## Bước 2 — Vạch trần Failure Mode: False Positive (40 giây)
+
+**[Hành động]: Trong Postman, mở một request liên quan đến luồng tạo dữ liệu hoặc giao dịch (ví dụ: request đặt hàng). Click vào tab Scripts / Tests.**
+
+> **Thoại:** "Nhưng bây giờ nhìn vào tab Scripts của request này — tab trống hoàn toàn. Không có dòng test nào. Nếu mình chỉ bấm Send..."
+
+**[Hành động]: Bấm Send. Response trả về HTTP 200. Tab Test Results hiện `0 tests passed`.**
+
+> **Thoại:** "Server trả về 200 OK — nhưng Postman không có gì để kiểm tra. Nếu backend trả về dữ liệu sai cấu trúc, thiếu trường, hoặc tính toán nhầm, Postman vẫn im lặng. Đây chính là False Positive — cảm giác an toàn giả cực kỳ nguy hiểm."
+
+**[Hành động]: Quay lại chat AI trong IDE. Paste `Prompt 2` từ `prompt_AI.md`, kèm mô tả endpoint vừa test.**
+
+> **Thoại:** "Mình dùng Prompt 2 để ép AI viết lại Schema Validation đúng chuẩn — phải định nghĩa rõ từng trường bắt buộc, đúng kiểu dữ liệu, và chặn data rò rỉ."
+
+**[Hành động]: Copy đoạn JavaScript mà AI trả ra. Paste vào tab Tests của request trong Postman. Bấm Send lại — lần này hiện test script đang chạy.**
+
+---
+
+## Bước 3 — Bổ sung Security & Negative Tests với Prompt 3 (35 giây)
+
+**[Hành động]: Quay lại chat AI trong IDE. Paste `Prompt 3` từ `prompt_AI.md` + API Spec.**
+
+> **Thoại:** "Điểm mù thứ hai của AI: nó chỉ test luồng thành công. AI không biết rằng một tài khoản bình thường không được phép gọi API của quản trị viên. Prompt 3 ép AI đóng vai Penetration Tester để sinh các kịch bản tấn công phân quyền và dữ liệu bất thường."
+
+**[Hành động]: AI trả ra folder "Negative & Security Tests" dạng JSON. Import vào Postman. Mở một request kiểm tra phân quyền. Bấm Send — kết quả hiện đúng status 403 Forbidden, test Pass màu xanh.**
+
+> **Thoại:** "Giờ chúng ta đã có cả kịch bản tấn công — và AI không thể tự làm điều này nếu không có Prompt đúng."
+
+---
+
+## Bước 4 — Liên kết chuỗi API với Prompt 4 (30 giây)
+
+**[Hành động]: Quay lại chat AI trong IDE. Paste `Prompt 4` + API Spec.**
+
+> **Thoại:** "Vấn đề cuối: AI hay gắn cứng dữ liệu — email tĩnh, ID tĩnh. Khi CI/CD chạy lần 2, sẽ báo lỗi Conflict vì email đã tồn tại. Prompt 4 yêu cầu AI sinh dữ liệu ngẫu nhiên và liên kết chuỗi request — ID từ bước trước tự động truyền sang bước sau."
+
+**[Hành động]: Import collection từ Prompt 4. Chạy Collection Runner — thấy biến môi trường tự động được cập nhật giữa các request liên tiếp. Chạy lần 2 — không còn lỗi Conflict.**
+
+> **Thoại:** "Collection này có thể chạy lặp lại an toàn trên CI/CD pipeline vì dữ liệu mới được sinh ra mỗi lần chạy."
+
+---
+
+## Bước 5 — Kết luận (15 giây)
+
+> **Thoại:** "Tổng kết lại: 4 prompt — 4 vấn đề khác nhau được giải quyết từng bước. AI tiết kiệm 80% thời gian setup, nhưng tư duy của QA Engineer mới là thứ quyết định liệu test có thực sự chất lượng. Đây chính là chiến lược Human-in-the-loop. Tiếp theo, mời Nam trình bày về Contract Testing với Pact."
+
+---
+
+## Checklist kỹ thuật trước khi quay
+
+- [ ] Repo SUT đã được clone về máy, server chạy được ở `localhost:3000`
+- [ ] Agent IDE (Cursor / VS Code + extension AI) đã mở tại thư mục repo
+- [ ] File `api_specification.md` đã mở trong tab IDE
+- [ ] File `prompt_AI.md` đã mở sẵn để copy-paste từng prompt
+- [ ] Postman Desktop đã mở, workspace mới trống
+- [ ] Tắt thông báo hệ thống trước khi quay để không bị gián đoạn

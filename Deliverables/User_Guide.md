@@ -305,6 +305,273 @@ Ngoài việc dùng Claude/ChatGPT bên ngoài, Postman còn tích hợp sẵn t
 
 **Lưu ý quan trọng:** Postbot chỉ dựa vào response *hiện tại đang hiển thị* để sinh test — nếu bạn test với coupon hợp lệ, Postbot sẽ chỉ sinh Happy Path. Hãy chạy thêm request với coupon sai để Postbot nhìn thấy response lỗi và sinh thêm Negative test.
 
+### 6.4 Thư viện Prompt Chuẩn hóa
+
+Thay vì dùng một prompt duy nhất và nhận đầu ra không đồng đều, nhóm đã xây dựng một **Thư viện Prompt theo mô hình Chuỗi Mắt Xích (Prompt Chain)**. Mỗi prompt giải quyết đúng một điểm yếu cụ thể của AI. Đầu ra của prompt trước là nền tảng để bổ sung ở prompt sau.
+
+> **Nguyên tắc vàng:** Luôn đính kèm **toàn bộ nội dung** file `api_specification.md` vào cuối mỗi prompt. Thiếu ngữ cảnh, AI sẽ bịa đặt endpoint và cấu trúc dữ liệu.
+
+#### Prompt 1 — Khởi tạo Bộ Test Toàn diện (Boilerplate & Coverage)
+
+**Mục đích:** Sinh ra khung sườn Postman Collection đầy đủ từ API Specification trong thời gian ngắn nhất. Đây là bước đầu tiên trong chuỗi.
+
+**Khi nào dùng:** Khi bắt đầu dự án, cần tạo nhanh skeleton bao phủ toàn bộ endpoint.
+
+```
+Đóng vai trò Senior QA Automation Engineer.
+
+Dựa trên Tài liệu Đặc tả API được đính kèm bên dưới, hãy tạo một file JSON tuân thủ
+chuẩn Postman Collection Schema v2.1.0 bao phủ toàn bộ hệ thống.
+
+Yêu cầu bắt buộc:
+- Cài đặt collection variable: baseUrl (URL gốc của hệ thống) và token (để trống).
+- Tạo request đầy đủ cho TẤT CẢ nhóm nghiệp vụ được mô tả trong đặc tả.
+- Với request đăng nhập: viết script trích xuất JWT token và lưu vào biến môi trường token.
+- Với mọi request yêu cầu xác thực: gắn Authorization: Bearer {{token}} vào header.
+- Mỗi request phải có test script kiểm tra HTTP Status Code bằng cú pháp pm.test.
+- Nếu collection quá dài, chia folder theo nghiệp vụ nhưng KHÔNG lược bỏ endpoint.
+- Trả về DUY NHẤT một khối JSON hợp lệ, không giải thích, không văn bản thừa.
+
+[Dán toàn bộ nội dung api_specification.md tại đây]
+```
+
+#### Prompt 2 — Chặt chẽ Schema Validation (Chống False Positive)
+
+**Mục đích:** Khắc phục lỗ hổng Schema Validation rỗng mà AI thường sinh ra. Đây là nguyên nhân gốc rễ của hiện tượng False Positive — test báo Pass nhưng thực tế API đang có lỗi.
+
+**Khi nào dùng:** Sau Prompt 1, áp dụng cho các endpoint có response body quan trọng (tiền tệ, vòng đời đơn hàng, dữ liệu người dùng).
+
+```
+Tôi vừa nhận được một Postman Collection do AI sinh ra. Trong tab Tests của các request
+quan trọng, AI đã tạo ra JSON Schema quá sơ sài — schema chỉ kiểm tra type là object
+mà không định nghĩa bất kỳ trường dữ liệu cụ thể nào.
+
+Đóng vai trò Senior QA Engineer, hãy viết lại đoạn JavaScript test script cho API này.
+
+Yêu cầu bắt buộc về JSON Schema Validation:
+- Phân tích response body từ đặc tả để xác định các trường dữ liệu thực sự được trả về.
+- Phải định nghĩa ít nhất 3 thuộc tính (properties) với đúng kiểu dữ liệu.
+- Phải có mảng required liệt kê tất cả các trường bắt buộc.
+- Phải thiết lập "additionalProperties": false để bắt lỗi Data Leakage.
+- Bổ sung assertion kiểm tra kiểu dữ liệu từng trường bằng pm.expect(...).to.be.a(...).
+- Chỉ trả về đoạn code JavaScript, không cần giải thích.
+
+[Dán mô tả endpoint và cấu trúc response mong đợi từ api_specification.md]
+```
+
+#### Prompt 3 — Bổ sung Kịch bản Ngoại lệ & Bảo mật
+
+**Mục đích:** Vượt qua thiên kiến Happy-path của AI và bổ sung các kịch bản tấn công phân quyền (RBAC), kiểm tra đầu vào bất thường, và vi phạm ràng buộc nghiệp vụ.
+
+**Khi nào dùng:** Sau khi đã có Happy-path tests từ Prompt 1.
+
+```
+Đóng vai trò Penetration Tester kiêm QA Automation Engineer.
+
+Tôi cần bổ sung các kịch bản kiểm thử ngoại lệ và bảo mật cho hệ thống đang test.
+Dựa trên Đặc tả API đính kèm, hãy tạo Postman JSON cho folder "Negative & Security Tests"
+bao gồm các nhóm kịch bản:
+
+Nhóm 1 — Authentication & RBAC:
+- Gọi API yêu cầu xác thực mà không gửi Authorization header (Kỳ vọng: 401).
+- Gọi API với Token sai chữ ký hoặc hết hạn (Kỳ vọng: 401 hoặc 403).
+- Token của tài khoản thường gọi API dành cho quản trị viên (Kỳ vọng: 403 Forbidden).
+
+Nhóm 2 — Input Validation:
+- Body hoàn toàn trống rỗng cho POST/PUT (Kỳ vọng: 400).
+- Trường dữ liệu sai kiểu (chuỗi vào trường số) (Kỳ vọng: 400).
+- Giá trị biên: số âm, số 0, chuỗi rỗng (Kỳ vọng: 400).
+
+Nhóm 3 — Business Rule Validation:
+- Thực hiện hành động khi chưa đủ điều kiện theo quy định của đặc tả.
+
+Yêu cầu trong tab Tests của MỖI request:
+- pm.test kiểm tra HTTP Status Code chính xác.
+- pm.test kiểm tra response body chứa thông báo lỗi hợp lý.
+
+Trả về DUY NHẤT một khối JSON chuẩn Postman Collection, không giải thích.
+
+[Dán toàn bộ nội dung api_specification.md tại đây]
+```
+
+#### Prompt 4 — Kiểm thử Chuỗi Liên kết & Dữ liệu Động
+
+**Mục đích:** Sinh test case kiểm tra vòng đời dữ liệu xuyên suốt nhiều API liên tiếp. Khắc phục lỗi hardcoded data gây Conflict 409 trên CI/CD khi chạy lặp.
+
+**Khi nào dùng:** Khi cần kiểm thử luồng end-to-end với nhiều bước phụ thuộc nhau.
+
+```
+Đóng vai trò Senior QA Automation Engineer chuyên về CI/CD test automation.
+
+Tôi cần kiểm thử một luồng nghiệp vụ đầu-cuối của hệ thống. Dựa trên Đặc tả API đính
+kèm, hãy chọn luồng quan trọng nhất và tạo Postman JSON chuỗi request liên tiếp.
+
+Yêu cầu kỹ thuật nghiêm ngặt:
+
+Về Dữ liệu Động (Dynamic Data):
+- Tab Pre-request Script của request đầu tiên: viết JavaScript sinh dữ liệu ngẫu nhiên
+  (email, username, ID) thay thế mọi giá trị hardcoded.
+- Sử dụng pm.variables.replaceIn('{{$randomEmail}}') hoặc logic random tự viết.
+- Lưu các giá trị vào biến môi trường để các request sau tái sử dụng.
+
+Về Request Chaining:
+- Tab Tests của mỗi request trung gian: parse JSON response, tìm trường định danh quan
+  trọng và lưu bằng pm.environment.set("tên_biến", giá_trị). Throw error nếu không có.
+- Tab Params/URL của request tiếp theo: dùng {{tên_biến}} để truyền tự động.
+
+Về Assertion cuối chuỗi:
+- Request cuối: viết script kiểm tra trạng thái dữ liệu qua API GET để xác nhận backend
+  đã ghi đúng vào database (không chỉ nhận 200 OK là tin).
+
+Trả về DUY NHẤT một khối JSON chuẩn Postman Collection v2.1.0, không giải thích.
+
+[Dán toàn bộ nội dung api_specification.md tại đây]
+```
+
+#### Tổng kết luồng sử dụng Prompt Chain
+
+```markdown
+Prompt 1  →  Prompt 2  →  Prompt 3  →  Prompt 4
+
+(Boilerplate)  →  (Schema)  →  (Negative/Security)  →  (Chaining/Dynamic)
+```
+
+| Prompt | Điểm yếu AI được khắc phục | Kết quả |
+|:---:|:---|:---|
+| **P1** | Thiếu coverage, không có skeleton | Collection đầy đủ endpoint |
+| **P2** | Schema rỗng → False Positive | Validation chặt chẽ, chống data leak |
+| **P3** | Happy-path bias, RBAC bị bỏ qua | Negative & security test cases |
+| **P4** | Hardcoded data, test rời rạc | Chuỗi liên kết, CI/CD-safe |
+
+### 6.5 Quy trình Human-in-the-loop
+
+Đây là quy trình được nhóm áp dụng trong thực tiễn dự án EShop, kết hợp tối ưu giữa tốc độ của AI và tư duy của QA Engineer:
+
+**Bước 1: Chuẩn bị ngữ cảnh**
+- Cung cấp toàn bộ nội dung `api_specification.md` cho AI — KHÔNG được đặt câu hỏi mơ hồ như "hãy test API của tôi" mà không có đặc tả.
+- Xác định nhóm nghiệp vụ cần test (Authentication, Orders, Admin...).
+
+**Bước 2: Chạy Prompt Chain theo thứ tự**
+- Chạy Prompt 1 → lấy skeleton JSON → import vào Postman.
+- Chạy Prompt 2 → copy test script → paste vào tab Tests của các request quan trọng.
+- Chạy Prompt 3 → import folder Negative & Security Tests.
+- Chạy Prompt 4 → import chuỗi end-to-end flow.
+
+**Bước 3: Human Review**
+- Đọc qua từng test script mà AI sinh ra — đặc biệt là phần Schema Validation và Status Code.
+- Rà soát bảng đặc tả để tìm các Business Rules còn thiếu (ví dụ: điều kiện tối thiểu của coupon, số lần dùng tối đa).
+- Bổ sung thủ công các kịch bản mà AI bỏ sót (xem mục 6.7).
+
+**Bước 4: Chạy Collection Runner & Kiểm tra Console**
+- Chạy toàn bộ collection qua **Collection Runner**.
+- Mở **Postman Console** (Ctrl+Alt+C) để kiểm tra lỗi JavaScript ngầm trong script — đây là bước nhiều người bỏ qua và gặp False Positive.
+
+**Bước 5: Đưa vào Newman / CI Pipeline**
+- Chạy thử với Newman: `newman run <collection.json> -e <environment.json>`.
+- Chỉ đưa vào GitHub Actions sau khi Collection chạy sạch trên local ít nhất 2 lần liên tiếp.
+
+### 6.6 Bảng So sánh: AI vs Manual Testing
+
+Dựa trên thực nghiệm của nhóm khi so sánh bộ Collection do AI sinh và bộ viết tay:
+
+| Tiêu chí | AI (với Prompt Chain) | QA Engineer (Manual) |
+|:---|:---|:---|
+| **Tốc độ khởi tạo** | ✅ **< 1 phút** — Parse spec, sinh skeleton ngay | ❌ **Hàng giờ** — Gõ tay từng URL, Header, Body |
+| **Độ bao phủ Edge Cases** | ❌ **Thấp** — Thiên kiến Happy-path | ✅ **Cao** — Tư duy phản biện, nhận diện rủi ro |
+| **Schema Validation** | ❌ **Lỏng lẻo** — `properties: {}` → False Positive | ✅ **Chặt chẽ** — `required` + `additionalProperties: false` |
+| **Request Chaining** | ❌ **Nông** — Test rời rạc, hardcode data | ✅ **Sâu** — Liên kết chuỗi, kiểm tra vòng đời data |
+| **Business Rules** | ❌ **Bỏ qua** — Không hiểu ràng buộc nghiệp vụ | ✅ **Tốt** — Biết test boundary condition, logic abuse |
+| **Dynamic Data** | ❌ **Yếu** — Hardcode → Conflict 409 trên CI/CD | ✅ **Tốt** — Pre-request script sinh UUID, random email |
+| **Phân quyền (RBAC)** | ❌ **Bỏ sót** — Dùng chung một `{{token}}` | ✅ **Đầy đủ** — Test 3 role khác nhau, privilege escalation |
+
+**Kết luận từ bảng so sánh:**
+
+AI sinh ra bộ khung đầy đủ về mặt cấu trúc endpoint, giúp tiết kiệm **~80% thời gian setup ban đầu**. Tuy nhiên, AI mắc phải Happy-Path Bias nghiêm trọng — toàn bộ kịch bản Negative, Edge Case, Security và Business Rule phải do QA tự tay bổ sung. Chiến lược tối ưu:
+
+> **AI sinh Boilerplate nhanh → QA Review & Bổ sung → Pipeline CI/CD an toàn**
+
+### 6.7 Nhận diện & Khắc phục AI Failure Modes
+
+Đây là phần quan trọng nhất trong việc sử dụng AI cho kiểm thử. Không nhận diện được các "điểm mù" này sẽ dẫn đến **False Positive** — tình trạng test báo Pass nhưng hệ thống thực ra đang có lỗi nghiêm trọng.
+
+#### Failure Mode 1: Schema Validation Vô giá trị
+
+**Hiện tượng:** AI thường sinh đoạn schema validation như sau:
+```javascript
+var schema = {
+    "type": "object",
+    "properties": {},
+    "additionalProperties": true
+};
+pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;
+```
+
+**Vấn đề:** Schema này không định nghĩa bất kỳ trường nào, nghĩa là object rỗng `{}`, object lỗi, hay object chứa dữ liệu rác đều được coi là **hợp lệ**.
+
+**Hậu quả:** CI/CD báo PASS dù API đang trả về dữ liệu sai cấu trúc hoặc lộ thông tin nhạy cảm.
+
+**Biện pháp khắc phục:**
+```javascript
+// Thay thế schema do AI sinh ra bằng schema chặt chẽ này:
+var schema = {
+    "type": "object",
+    "required": ["order_id", "total_amount", "status"],
+    "properties": {
+        "order_id": { "type": "number" },
+        "total_amount": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending", "confirmed", "shipping"] }
+    },
+    "additionalProperties": false  // Bắt lỗi data leakage
+};
+pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;
+```
+
+#### Failure Mode 2: Bỏ qua Ràng buộc Nghiệp vụ (Data Hallucination)
+
+**Hiện tượng:** AI sinh payload đúng cú pháp JSON nhưng hoàn toàn bỏ qua các ràng buộc logic kinh doanh được mô tả trong đặc tả (điều kiện tối thiểu, giới hạn sử dụng, vòng đời trạng thái...).
+
+**Ví dụ:** Với API áp dụng mã giảm giá có điều kiện `min_order_amount` và `max_uses_per_user`, AI chỉ tạo request thành công mà không test các trường hợp: đơn hàng chưa đạt giá trị tối thiểu, mã đã hết lượt dùng, mã hết hạn.
+
+**Hậu quả:** Collection chạy PASS nhưng không xác minh được Business Logic của hệ thống.
+
+**Biện pháp khắc phục:** Đọc kỹ phần mô tả của từng API trong đặc tả, tự tay liệt kê danh sách Business Rules và thiết kế test case vi phạm từng rule đó. Đây là phần AI **không thể thay thế**.
+
+#### Failure Mode 3: Thiếu tư duy Phân quyền (RBAC Failure)
+
+**Hiện tượng:** Toàn bộ Collection do AI sinh chỉ dùng chung một biến `{{token}}` và ngầm định mọi API đều gọi ở trạng thái đã có quyền đầy đủ.
+
+**Những trường hợp AI bỏ sót:**
+- User thường gọi API Admin (ví dụ: xóa người dùng, cập nhật trạng thái đơn hàng).
+- Không gửi Authorization header.
+- Sử dụng token của tài khoản A để truy cập tài nguyên của tài khoản B (IDOR).
+
+**Hậu quả:** Không phát hiện được Broken Access Control, Privilege Escalation, IDOR — đều là lỗ hổng thuộc **OWASP Top 10**.
+
+**Biện pháp khắc phục:**
+- Dùng **Prompt 3** để ép AI sinh folder "Security Tests".
+- Tạo thêm biến môi trường `user_token` và `admin_token` để test hai role khác nhau.
+- Tự tay thiết kế kịch bản IDOR: dùng token của User A để GET/DELETE tài nguyên thuộc User B.
+
+#### Failure Mode 4: Thiên kiến Happy-path & Dữ liệu Tĩnh
+
+**Hiện tượng 1 (Happy-path bias):** AI chỉ test các trường hợp thành công, bỏ sót hoàn toàn các trường hợp biên (boundary), kiểu dữ liệu sai, chuỗi rỗng, số âm, v.v.
+
+**Hiện tượng 2 (Static data):** AI thường hardcode dữ liệu vào payload (email: "test@domain.com", id: 1). Khi chạy test lần 2 trên CI/CD, database đã có bản ghi này → báo lỗi Conflict 409.
+
+**Biện pháp khắc phục:**
+- Dùng **Prompt 4** để ép AI sinh Pre-request Script tạo dữ liệu ngẫu nhiên.
+- Tự tay bổ sung test case cho các giá trị biên quan trọng (số lượng = 0, số lượng âm, chuỗi rỗng, kiểu số nhưng truyền chuỗi...).
+
+#### Bảng tổng hợp Failure Modes
+
+| Failure Mode | Biểu hiện | Công cụ phát hiện | Biện pháp |
+|:---|:---|:---|:---|
+| Schema rỗng | PASS dù data sai | Postman Console | Dùng Prompt 2 |
+| Business Rule bị bỏ | PASS dù logic sai | Code Review | Bổ sung thủ công |
+| RBAC bị bỏ | Không test phân quyền | Security Audit | Dùng Prompt 3 |
+| Hardcoded data | CI/CD fail lần 2 | Newman logs | Dùng Prompt 4 |
+| Happy-path bias | Thiếu Edge Cases | Peer Review | Bổ sung thủ công |
+
 ---
 
 

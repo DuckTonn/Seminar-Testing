@@ -470,7 +470,7 @@
         </div>
       </div>
     </div>
-    <div class="navhint">Slide 1 / 19</div>
+    <div class="navhint">Slide 1 / 21</div>
 
     <!-- SLIDE 2 : KIẾN THỨC NỀN & Testing Pyramid -->
     <div class="slide">
@@ -509,7 +509,7 @@
       </div>
       <div class="footer">2 · Khái niệm API Testing</div>
     </div>
-    <div class="navhint">Slide 2 / 19</div>
+    <div class="navhint">Slide 2 / 21</div>
 
     <!-- SLIDE 3 : API Anatomy -->
     <div class="slide">
@@ -551,7 +551,7 @@
       <div class="bottom-banner"><b>Lưu ý:</b> Một API Test đúng chuẩn phải kiểm tra đầy đủ cả <b>Status Code</b> lẫn <b>Cấu trúc dữ liệu Response</b> trả về.</div>
       <div class="footer">3 · Giải phẫu API</div>
     </div>
-    <div class="navhint">Slide 3 / 19</div>
+    <div class="navhint">Slide 3 / 21</div>
 
     <!-- SLIDE 4 : Overview features -->
     <div class="slide">
@@ -604,7 +604,7 @@
       </div>
       <div class="footer">4 · Tổng quan Postman</div>
     </div>
-    <div class="navhint">Slide 4 / 19</div>
+    <div class="navhint">Slide 4 / 21</div>
 
     <!-- SLIDE 5 : Test structure & coverage -->
     <div class="slide">
@@ -660,7 +660,7 @@
       </div>
       <div class="footer">5 · Cấu trúc &amp; Coverage</div>
     </div>
-    <div class="navhint">Slide 5 / 19</div>
+    <div class="navhint">Slide 5 / 21</div>
 
     <!-- SLIDE 6 : Postman Failure Modes -->
     <div class="slide">
@@ -697,7 +697,7 @@
       <div class="bottom-banner"><b>Bài học:</b> Luôn kiểm tra kỹ biến môi trường và sử dụng linter hoặc mở <code>Postman Console</code> (Ctrl+Alt+C) để debug script ngầm.</div>
       <div class="footer">6 · Postman Failure Modes</div>
     </div>
-    <div class="navhint">Slide 6 / 19</div>
+    <div class="navhint">Slide 6 / 21</div>
 
     <!-- SLIDE 7 : Live Demo Postman -->
     <div class="slide">
@@ -732,7 +732,7 @@
 
       <div class="footer">7 · Live Demo Postman</div>
     </div>
-    <div class="navhint">Slide 7 / 19</div>
+    <div class="navhint">Slide 7 / 21</div>
 
 
 
@@ -778,7 +778,7 @@
       </div>
       <div class="footer">8 · Năng lực của AI</div>
     </div>
-    <div class="navhint">Slide 8 / 19</div>
+    <div class="navhint">Slide 8 / 21</div>
 
     <!-- SLIDE 9 : AI Failure Modes -->
     <div class="slide">
@@ -814,7 +814,7 @@
       <div class="bottom-banner"><b>Bài học:</b> AI chỉ tạo Boilerplate. Con người (Human-in-the-loop) phải tự review mã nguồn và thiết kế kịch bản bẻ khóa nghiệp vụ.</div>
       <div class="footer">9 · Điểm mù của AI</div>
     </div>
-    <div class="navhint">Slide 9 / 19</div>
+    <div class="navhint">Slide 9 / 21</div>
 
     <!-- SLIDE 10 : AI Demo -->
     <div class="slide">
@@ -851,7 +851,88 @@
 
       <div class="footer">10 · Live Demo AI Generation</div>
     </div>
-    <div class="navhint">Slide 10 / 19</div>
+    <div class="navhint">Slide 10 / 21</div>
+
+    <!-- SLIDE 10A : PROMPT CHAIN WORKFLOW -->
+    <div class="slide">
+      <div class="topbar"></div>
+      <div class="breadcrumb">EShop Seminar · T06_API_and_Contract_Testing</div>
+      <div class="title">Chiến lược Prompt Engineering — 4 Bước Chuỗi Mắt Xích</div>
+      <div class="subtitle">Mỗi prompt giải quyết đúng một điểm mù của AI. Đầu ra prompt trước là đầu vào của prompt sau.</div>
+
+      <div class="cols" style="top:160px; bottom:50px;">
+        <div class="col">
+          <div class="banner">Prompt 1 → Khởi tạo Skeleton</div>
+          <div class="cov-item">
+            <div class="h ok">Đính kèm API Specification + yêu cầu bao phủ đầy đủ</div>
+            <div class="d">AI sinh toàn bộ Collection v2.1.0: URL, Headers, Body, test script status cơ bản. Tiết kiệm 80% thời gian setup thủ công.</div>
+          </div>
+          <div class="banner" style="margin-top:12px;">Prompt 2 → Siết Schema</div>
+          <div class="cov-item">
+            <div class="h ok">Ép AI viết schema chặt: required + additionalProperties: false</div>
+            <div class="d">Khắc phục Schema Validation rỗng — nguyên nhân chính gây ra False Positive nguy hiểm trong CI/CD.</div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="banner blue">Prompt 3 → Negative & Security</div>
+          <div class="cov-item">
+            <div class="h ok">Ép AI đóng vai Penetration Tester</div>
+            <div class="d">Sinh kịch bản không có token, token hết hạn, leo thang đặc quyền (RBAC), dữ liệu sai kiểu, giá trị biên âm/0.</div>
+          </div>
+          <div class="banner blue" style="margin-top:12px;">Prompt 4 → Chaining & Dynamic Data</div>
+          <div class="cov-item">
+            <div class="h ok">Trích xuất ID → lưu biến môi trường → truyền tự động</div>
+            <div class="d">Sinh dữ liệu ngẫu nhiên (random email/UUID) để chạy lặp CI/CD không bị Conflict 409. Kiểm tra vòng đời dữ liệu xuyên suốt.</div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">10A · Prompt Engineering Workflow</div>
+    </div>
+    <div class="navhint">Slide 10A / 21</div>
+
+    <!-- SLIDE 10B : AI vs MANUAL -->
+    <div class="slide">
+      <div class="topbar"></div>
+      <div class="breadcrumb">EShop Seminar · T06_API_and_Contract_Testing</div>
+      <div class="title">AI vs Manual Testing — So sánh Thực tiễn</div>
+      <div class="subtitle">Chiến lược tối ưu: Human-in-the-loop — AI tăng tốc, QA đảm bảo chất lượng.</div>
+
+      <table class="tbl" style="top:165px;">
+        <thead>
+          <tr>
+            <th style="width:220px;">Tiêu chí</th>
+            <th>AI (Prompt Engineering)</th>
+            <th style="width:280px;">QA Engineer (Manual)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="key">Tốc độ khởi tạo</td>
+            <td><b style="color:var(--green);">✓ &lt; 1 phút</b> — Parse spec, sinh JSON skeleton ngay lập tức</td>
+            <td>Hàng giờ — gõ tay từng URL, Header, Body</td>
+          </tr>
+          <tr>
+            <td class="key">Độ bao phủ Edge Cases</td>
+            <td><b style="color:var(--red);">✗ Thấp</b> — Thiên kiến Happy-path, bỏ sót giá trị biên</td>
+            <td><b style="color:var(--green);">✓ Cao</b> — Tư duy phản biện, nhận diện rủi ro nghiệp vụ</td>
+          </tr>
+          <tr>
+            <td class="key">Schema Validation</td>
+            <td><b style="color:var(--red);">✗ Lỏng lẻo</b> — Sinh <code>properties: {}</code> gây False Positive</td>
+            <td><b style="color:var(--green);">✓ Chặt chẽ</b> — Định nghĩa rõ required, additionalProperties: false</td>
+          </tr>
+          <tr>
+            <td class="key">Request Chaining</td>
+            <td><b style="color:var(--red);">✗ Nông</b> — Test từng request riêng lẻ, hardcode dữ liệu</td>
+            <td><b style="color:var(--green);">✓ Sâu</b> — Chuỗi liên kết, kiểm tra vòng đời dữ liệu</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="bottom-banner"><b>Kết luận:</b> Dùng AI để sinh <b>Boilerplate nhanh (80% thời gian setup)</b> → QA Review và bổ sung <b>Edge Cases, Security Tests, Business Rules</b> → Pipeline CI/CD an toàn.</div>
+      <div class="footer">10B · AI vs Manual</div>
+    </div>
+    <div class="navhint">Slide 10B / 21</div>
 
     <!-- SLIDE 11 : IN CLASS ACTIVITY -->
     <div class="slide">
@@ -886,7 +967,7 @@
       </div>
       <div class="footer">11 · In-Class Activity</div>
     </div>
-    <div class="navhint">Slide 11 / 19</div>
+    <div class="navhint">Slide 11 / 21</div>
 
 
 
@@ -933,7 +1014,7 @@
       </div>
       <div class="footer">12 · Integration vs Contract Testing</div>
     </div>
-    <div class="navhint">Slide 12 / 19</div>
+    <div class="navhint">Slide 12 / 21</div>
 
     <!-- SLIDE 13 : Consumer-Driven Contract (CDC) -->
     <div class="slide">
@@ -976,7 +1057,7 @@
       </div>
       <div class="footer">13 · Consumer-Driven Contract (CDC)</div>
     </div>
-    <div class="navhint">Slide 13 / 19</div>
+    <div class="navhint">Slide 13 / 21</div>
 
     <!-- SLIDE 14 : Pact Failure Modes (table) -->
     <div class="slide">
@@ -1008,11 +1089,11 @@
         </tbody>
       </table>
 
-      <div class="footer">14 · Pact Mechanics & Security Warning</div>
+      <div class="footer">16 · Pact Mechanics & Security Warning</div>
     </div>
-    <div class="navhint">Slide 14 / 19</div>
+    <div class="navhint">Slide 16 / 21</div>
 
-    <!-- SLIDE 15 : Live Demo Pact -->
+    <!-- SLIDE 17 : Live Demo Pact -->
     <div class="slide">
       <div class="topbar"></div>
       <div class="breadcrumb">EShop Seminar · T06_API_and_Contract_Testing</div>
@@ -1044,20 +1125,11 @@
         </tbody>
       </table>
 
-      <div class="footer">15 · Live Demo Contract Testing</div>
+      <div class="footer">17 · Live Demo Contract Testing</div>
     </div>
-    <div class="navhint">Slide 15 / 19</div>
+    <div class="navhint">Slide 17 / 21</div>
 
-
-
-    <!-- ================================================================ -->
-    <!-- # PHAN CUA LUAN (1) - Slides 16-19: CI/CD Role, Pipeline, Reports, Thank You -->
-    <!-- Luan chiu trach nhiem: Slide 16 (CI/CD Role) den Slide 19 (Thank You) -->
-    <!-- Xoa comment nay khi da hoan thien va ready to merge -->
-    <!-- ================================================================ -->
-
-
-    <!-- SLIDE 16 : CI/CD Role -->
+    <!-- SLIDE 18 : CI/CD Role -->
     <div class="slide">
       <div class="topbar"></div>
       <div class="breadcrumb">EShop Seminar · T06_API_and_Contract_Testing</div>
@@ -1088,11 +1160,11 @@
           </div>
         </div>
       </div>
-      <div class="footer">16 · Vai trò CI/CD</div>
+      <div class="footer">18 · Vai trò CI/CD</div>
     </div>
-    <div class="navhint">Slide 16 / 19</div>
+    <div class="navhint">Slide 18 / 21</div>
 
-    <!-- SLIDE 17 : Pipeline Design -->
+    <!-- SLIDE 19 : Pipeline Design -->
     <div class="slide">
       <div class="topbar"></div>
       <div class="breadcrumb">EShop Seminar · T06_API_and_Contract_Testing</div>
@@ -1134,11 +1206,11 @@
           </div>
         </div>
       </div>
-      <div class="footer">17 · Thiết kế Pipeline</div>
+      <div class="footer">19 · Thiết kế Pipeline</div>
     </div>
-    <div class="navhint">Slide 17 / 19</div>
+    <div class="navhint">Slide 19 / 21</div>
 
-    <!-- SLIDE 18 : Automated Reports -->
+    <!-- SLIDE 20 : Automated Reports -->
     <div class="slide">
       <div class="topbar"></div>
       <div class="breadcrumb">EShop Seminar · T06_API_and_Contract_Testing</div>
@@ -1169,11 +1241,11 @@
         </tbody>
       </table>
 
-      <div class="footer">18 · Live Demo CI/CD</div>
+      <div class="footer">20 · Live Demo CI/CD</div>
     </div>
-    <div class="navhint">Slide 18 / 19</div>
+    <div class="navhint">Slide 20 / 21</div>
 
-    <!-- SLIDE 19 : THANK YOU -->
+    <!-- SLIDE 21 : THANK YOU -->
     <div class="slide">
       <div class="topbar"></div>
       <div class="breadcrumb">EShop Seminar · T06_API_and_Contract_Testing</div>
@@ -1183,9 +1255,9 @@
         <p style="font-size: 24px; color: var(--ink);">Nhóm 05 sẵn sàng trả lời câu hỏi (Q&A).</p>
       </div>
 
-      <div class="footer">19 · Q&A</div>
+      <div class="footer">21 · Q&A</div>
     </div>
-    <div class="navhint">Slide 19 / 19</div>
+    <div class="navhint">Slide 21 / 21</div>
 
   </div>
 </body>
