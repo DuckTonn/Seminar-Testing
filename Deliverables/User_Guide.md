@@ -363,35 +363,184 @@ Như thấy ở code trên, hàm `requestFilter` là cứu cánh cực kỳ quan
 
 
 <!-- ================================================================ -->
-<!-- # PHAN CUA LUAN (1) - Section 8: CI/CD voi GitHub Actions (8.1 -> 8.2) -->
+<!-- # PHAN CUA LUAN (1) - Section 8: CI/CD voi GitHub Actions (8.1 -> 8.4) -->
 <!-- Luan chiu trach nhiem: Workflow YAML, Newman pipeline, HTML Extra report, Artifacts -->
-<!-- Xoa comment nay khi da hoan thien va ready to merge -->
 <!-- ================================================================ -->
 
 
 ## 8. Tích hợp Liên tục với GitHub Actions
-Mọi đoạn script trên máy cá nhân đều không có ý nghĩa nếu code lỗi vẫn được merge vào server chính. Nhóm đã tích hợp toàn bộ Postman (thông qua Newman) và Pact vào file `.github/workflows/test.yml`.
 
-### 8.1 Luồng CI/CD Pipeline
-1. Cài đặt Node.js v16 trên Ubuntu server của GitHub.
-2. Chạy lệnh `npm ci` để cài thư viện.
-3. Kích hoạt Backend chạy ngầm: `node server.js &` (Dấu `&` giúp server chạy ở background mà không làm treo pipeline).
-4. Đợi 3 giây cho server sẵn sàng: `sleep 3`.
-5. Chạy Newman: `newman run EShop_Collection_v2.json -e EShop_Environment.json --reporters cli,htmlextra`
-6. Chạy Pact: `npm run test:pact`
+Mọi kịch bản kiểm thử trên môi trường local (máy cá nhân của Developer/QA) đều có thể bị bỏ quên hoặc chạy sai môi trường. Để đảm bảo tính toàn vẹn của mã nguồn trước khi merge vào nhánh chính, dự án EShop đã thiết lập quy trình **Tích hợp Liên tục (Continuous Integration - CI)** tự động hóa bằng **GitHub Actions**.
 
-### 8.2 Cấu hình Báo cáo Đẹp (HTML Extra) & Artifacts
-Sử dụng plugin `newman-reporter-htmlextra`, báo cáo xuất ra không chỉ là những dòng text nhàm chán mà là một giao diện Dashboard cực đẹp.
-Để lấy được file báo cáo kể cả khi luồng bị gãy (Failed), nhóm cấu hình block `if: always()`:
+Mỗi khi có thay đổi mã nguồn được `push` lên repository hoặc một `pull_request` được khởi tạo hướng về nhánh `main`, hệ thống sẽ tự động kích hoạt pipeline để chạy toàn bộ các kịch bản kiểm thử API (Postman/Newman) và Contract Testing (Pact).
+
+---
+
+### 8.1 Sơ đồ Hoạt động của CI Pipeline
+
+Dưới đây là sơ đồ mô tả luồng hoạt động tự động của pipeline kiểm thử (job `test-api`):
+
+```mermaid
+graph TD
+    Start([Push / Pull Request to main]) --> Checkout[1. Checkout Source Code]
+    Checkout --> SetupNode[2. Setup Node.js]
+    SetupNode --> CacheDeps{3. Check Cache}
+    
+    CacheDeps -- Cache Hit --> InstallTools[4. Install Global Tools: Newman & Reporter]
+    CacheDeps -- Cache Miss --> NpmCi[3.1. npm ci Backend & Contract Testing]
+    NpmCi --> InstallTools
+    
+    InstallTools --> RunConsumer[5. Run Pact Consumer Tests]
+    RunConsumer -- Sinh file contract JSON --> StartBackend[6. Start Backend Server]
+    StartBackend --> WaitOn[7. wait-on http://localhost:3000]
+    
+    WaitOn --> RunNewman[8. Run Newman API Tests]
+    RunNewman --> RunPactVerify[9. Run Pact Provider Verification]
+    
+    RunNewman -.-> UploadArtifacts[10. Upload reports/ Artifacts]
+    RunPactVerify -.-> UploadArtifacts
+    
+    UploadArtifacts --> End([Hoàn thành Job])
+
+    style RunConsumer fill:#f9f,stroke:#333,stroke-width:2px
+    style RunNewman fill:#bbf,stroke:#333,stroke-width:2px
+    style RunPactVerify fill:#ffb,stroke:#333,stroke-width:2px
+    style UploadArtifacts fill:#bfb,stroke:#333,stroke-width:2px
+```
+
+---
+
+### 8.2 Cấu hình Chi tiết Workflow
+
+Quy trình CI được định nghĩa trong file cấu hình `.github/workflows/newman.yml` :
+
 ```yaml
-      - name: Upload HTML Report
-        uses: actions/upload-artifact@v3
-        if: always() # Luôn luôn chạy bước này dù lệnh newman phía trên có bị báo đỏ
+name: EShop CI Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-api:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Bước 1: Tải mã nguồn mới nhất từ GitHub về máy ảo Linux
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      # Bước 2: Khởi tạo môi trường Node.js và cấu hình cache
+      - name: Setup Node.js v20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: |
+            backend/package-lock.json
+            contract_testing/package-lock.json
+
+      # Bước 3: Cài đặt các thư viện phụ thuộc (dependencies)
+      - name: Install Backend Dependencies
+        run: |
+          cd backend
+          npm ci
+
+      - name: Install Contract Testing Dependencies
+        run: |
+          cd contract_testing
+          npm ci
+
+      # Bước 4: Cài đặt các công cụ kiểm thử toàn cục
+      - name: Install Newman CLI & htmlextra reporter
+        run: |
+          npm install -g newman newman-reporter-htmlextra
+
+      # Bước 5: Chạy các kịch bản Pact Consumer Tests để tạo file hợp đồng JSON mới nhất
+      - name: Run Pact Consumer Tests
+        run: |
+          cd contract_testing
+          npm run test:pact
+
+      # Bước 6: Khởi chạy ngầm server Backend
+      - name: Start Backend Server (Background)
+        run: |
+          cd backend
+          node server.js &
+
+      # Bước 7: Chờ server sẵn sàng
+      - name: Wait for SUT to be Ready
+        run: |
+          npx wait-on http://localhost:3000
+
+      # Bước 8: Chạy Newman API Tests và xuất báo cáo HTML
+      - name: Run Newman API Tests (Postman Collection)
+        run: |
+          newman run EShop_Collection_v2.json -e \ 
+          EShop_Environment.json -r cli, \ 
+          htmlextra --reporter-htmlextra-export reports/newman-report.html
+
+      # Bước 9: Chạy Pact Provider Verification để kiểm chứng cấu trúc hợp đồng
+      - name: Run Pact Provider Verification
+        if: always() # Luôn chạy để thu thập logs kể cả khi bước Newman trước đó bị fail
+        run: |
+          cd contract_testing
+          npm run test:provider | tee ../reports/pact-verification-report.txt
+
+      # Bước 10: Đóng gói và tải các báo cáo kiểm thử lên GitHub làm Artifacts
+      - name: Upload Test Reports Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: EShop-Test-Reports
-          path: newman/
+          path: reports/
 ```
-Developer chỉ cần vào giao diện GitHub Actions, tải file Zip chứa report HTML về và mở bằng trình duyệt để xem tận mắt API nào đang lỗi, lỗi ở dòng nào.
+
+---
+
+### 8.3 Chi tiết các bước cốt lõi trong Pipeline
+
+1. **Cơ chế Cache dependencies (Bước 2):** Nếu không có sự thay đổi thư viện trong file `package-lock.json`, GitHub Actions sẽ tự động phục hồi thư mục `node_modules` từ cache của lần chạy trước. Điều này giúp giảm thời gian chạy CI.
+2. **Ngăn ngừa lỗi Race Condition (Bước 7):** Khởi chạy server Node.js bằng câu lệnh `node server.js &` để kết nối cơ sở dữ liệu và bind cổng 3000. Nếu gọi Newman ngay lập tức, các request sẽ bị lỗi. Sử dụng công cụ `wait-on` để liên tục thăm dò cổng 3000 và chỉ giải phóng tiến trình chạy test khi server thực sự phản hồi.
+3. **Độ an toàn thông tin với `if: always()` (Bước 9 & 10):** Theo nguyên tắc kiểm thử, khi có lỗi xảy ra, việc lưu trữ log và báo cáo là cực kỳ quan trọng để phục vụ công tác debug. Nếu không cấu hình `if: always()`, khi Newman phát hiện lỗi assert, GitHub Actions sẽ dừng ngay lập tức và hủy bỏ tất cả các step sau, khiến lập trình viên không có cách nào xem được HTML report hay Pact mismatch logs.
+
+---
+
+### 8.4 Hướng dẫn theo dõi và phân tích báo cáo trên GitHub Actions
+
+#### 1. Theo dõi logs chạy trực tiếp
+- Truy cập tab **Actions** trên repository GitHub.
+- Click chọn Workflow Run tương ứng với commit mới nhất để giám sát tiến độ thực thi của job `test-api`.
+
+#### 2. Tải và giải nén báo cáo (Artifacts)
+- Khi pipeline hoàn thành, cuộn xuống phần **Artifacts** ở cuối trang tóm tắt.
+- Tải file **`EShop-Test-Reports`** (định dạng `.zip`).
+- Giải nén file zip sẽ thu được:
+  - `newman-report.html`: Báo cáo chi tiết API của Newman.
+  - `pact-verification-report.txt`: File log xác thực hợp đồng của Pact Provider.
+
+![](./Image/artifacts.png)
+---
+
+### 8.5 Phân tích Kết quả (Artifacts & Verification Logs)
+
+#### 1. Trạng thái chạy của Workflow trên GitHub Actions
+- **Nếu mọi kiểm thử đều Pass (Thành công):**
+  ![Minh chứng Pipeline chạy thành công trên GitHub Actions](./Image/ci_run_success.png)
+- **Khi test case API thất bại, GitHub console logs sẽ chỉ rõ assertion nào không đạt yêu cầu:**
+
+  ![Minh chứng Pipeline bị lỗi khi test thất bại](./Image/ci_run_failed.png)
+
+#### 2. Giao diện báo cáo Newman HTML Extra
+- **Trang Dashboard tổng quan chỉ ra chính xác request/response và assert bị lỗi:**
+  ![Dashboard báo cáo Newman HTML Extra](./Image/newman_report_dashboard.png)
+  ![Chi tiết các test case của Newman HTML Extra](./Image/newman_report_details.png)
+
+#### 3. Kết quả xác thực hợp đồng Pact (Pact Verification)
+- **Xác thực thành công (Pact Passed):** Backend đáp ứng đúng cấu trúc của Consumer.
+  ![Pact Verification chạy thành công](./Image/pact_verification.png)
 
 ---
 
