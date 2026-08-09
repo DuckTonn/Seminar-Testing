@@ -62,6 +62,22 @@ Yêu cầu bắt buộc về JSON Schema Validation:
 [Dán mô tả endpoint và cấu trúc response mong đợi từ api_specification.md tại đây]
 ```
 
+**Ví dụ request đặt hàng:**
+
+```
+Tôi vừa nhận được một Postman Collection do AI sinh ra. Trong tab Tests của các request quan trọng, AI đã tạo ra JSON Schema quá sơ sài — schema chỉ kiểm tra type là object mà không định nghĩa bất kỳ trường dữ liệu cụ thể nào, dẫn đến tình trạng False Positive nguy hiểm.
+
+Đóng vai trò Senior QA Engineer, hãy viết lại đoạn JavaScript test script (dùng trong tab Tests của Postman) cho `/api/checkout`:
+
+Yêu cầu bắt buộc về JSON Schema Validation:
+- Phân tích và định nghĩa chính xác ít nhất 3 thuộc tính phản hồi dự kiến của đơn hàng (Ví dụ: order_id, total_amount, status, message).
+- Thiết lập mảng `required` chứa các trường bắt buộc và cấu hình `"additionalProperties": false` để chặn dữ liệu rác.
+- Thêm assertion kiểm tra kiểu dữ liệu cho từng trường bằng `pm.expect(...).to.be.a(...)`.
+- Chỉ trả về đoạn code JavaScript, không cần giải thích.
+
+[Dán mô tả endpoint và cấu trúc response mong đợi từ api_specification.md tại đây]
+```
+
 ---
 
 ## Prompt 3 — Bổ sung Kịch bản Ngoại lệ & Bảo mật (Negative & Security Tests)
@@ -101,6 +117,29 @@ Trả về DUY NHẤT một khối JSON chuẩn Postman Collection, không giả
 [Dán toàn bộ nội dung api_specification.md tại đây]
 ```
 
+**Ví dụ về các API quản lý người dùng (`GET /api/admin/users` và `DELETE /api/admin/users/:id`):**
+
+```
+Đóng vai trò Penetration Tester kiêm QA Automation Engineer. Hãy tạo Postman JSON cho folder "Negative & Security Tests" tập trung DUY NHẤT vào các API Dành cho Admin (cụ thể: GET /api/admin/users và DELETE /api/admin/users/:id):
+
+Nhóm 1 — Xác thực (Authentication):
+- Gọi API danh sách người dùng mà không gửi header Authorization (Kỳ vọng: 401 Unauthorized).
+
+Nhóm 2 — Phân quyền (RBAC):
+- Sử dụng token của một tài khoản User bình thường (không có quyền Admin) để gọi API lấy danh sách người dùng hoặc xóa người dùng (Kỳ vọng: 403 Forbidden).
+
+Nhóm 3 — Input Validation:
+- Gửi request Xóa người dùng (DELETE /api/admin/users/:id) với ID không hợp lệ (ví dụ: truyền chuỗi ký tự "abc" thay vì ID số) (Kỳ vọng: 400 Bad Request).
+
+Yêu cầu kỹ thuật:
+- Mọi request phải có `pm.test` kiểm tra HTTP Status Code chính xác theo kỳ vọng.
+- Trả về DUY NHẤT một khối JSON chuẩn Postman Collection v2.1.0, không giải thích.
+
+Trả về DUY NHẤT một khối JSON chuẩn Postman Collection, không giải thích.
+
+[Dán toàn bộ nội dung api_specification.md tại đây]
+```
+
 ---
 
 ## Prompt 4 — Kiểm thử Chuỗi Liên kết & Dữ liệu Động (Request Chaining & Dynamic Data)
@@ -134,6 +173,28 @@ Về Assertion cuối chuỗi:
 Trả về DUY NHẤT một khối JSON chuẩn Postman Collection v2.1.0, không giải thích.
 
 [Dán toàn bộ nội dung api_specification.md tại đây]
+```
+
+**Ví dụ về luồng Đăng ký -> Đăng nhập -> Đặt hàng:**
+
+```
+Đóng vai trò Senior QA Automation Engineer chuyên về test automation cho CI/CD pipeline. Hãy tạo Postman JSON cho một chuỗi request liên tiếp xuyên suốt luồng: Đăng ký (POST /api/register) -> Đăng nhập (POST /api/login) -> Đặt hàng (POST /api/checkout).
+
+Yêu cầu kỹ thuật nghiêm ngặt:
+1. Request Đăng ký (POST /api/register):
+- Tab Pre-request Script: Viết JavaScript sinh dữ liệu ngẫu nhiên cho `email` (ví dụ: dùng Date.now() hoặc $randomEmail) và lưu vào biến môi trường để tránh lỗi 409 Conflict ở các lần chạy sau.
+- Dùng biến môi trường này trong Body request.
+
+2. Request Đăng nhập (POST /api/login):
+- Sử dụng email vừa được tạo từ biến môi trường.
+- Tab Tests: Phân tích JSON response, trích xuất chuỗi JWT `token` và lưu vào biến môi trường bằng `pm.environment.set("token", ...)`.
+
+3. Request Đặt hàng (POST /api/checkout):
+- Header: Tự động truyền `Authorization: Bearer {{token}}`.
+- Body: Truyền dữ liệu hợp lệ (total_amount, shipping_address).
+- Tab Tests: Viết script kiểm tra đơn hàng tạo thành công (Status 200/201).
+
+Trả về DUY NHẤT một khối JSON chuẩn Postman Collection v2.1.0, không giải thích.
 ```
 
 ---
