@@ -31,7 +31,7 @@ Sự kết hợp của 3 phương pháp này không chỉ bù trừ khuyết đi
 
 ---
 
-## 2. Nhập môn API Testing (Dành cho người mới)
+## 2. Nhập môn API Testing 
 
 Nếu bạn là người mới tiếp cận với lĩnh vực kiểm thử phần mềm, hãy tưởng tượng API giống như một **người phục vụ (waiter)** trong nhà hàng.
 - **Frontend (Website/App):** Là bạn, người ngồi xem thực đơn và gọi món.
@@ -54,14 +54,14 @@ Nếu không test kỹ, một lỗi tính toán tiền ở nhà bếp (Backend) 
 ## 3. Nền tảng Lý thuyết & Chiến lược Kiểm thử
 *(Dựa trên lý thuyết cốt lõi từ sách "Testing Web APIs" của tác giả Mark Winteringham và tài liệu chính thức của Pact)*
 
-### 3.1 Chiến lược kiểm thử dựa trên rủi ro (Risk-Driven Testing - Chapter 4)
+### 3.1 Chiến lược kiểm thử dựa trên rủi ro (Risk-Driven Testing)
 Theo Mark Winteringham, kiểm thử toàn bộ 100% các API là một sự lãng phí tài nguyên và không thực tế trong các chu kỳ Agile ngắn hạn. Thay vào đó, nhóm đã áp dụng **Chiến lược kiểm thử dựa trên rủi ro (Risk-Driven Testing)** để phân loại và ưu tiên các endpoint của EShop:
 
 - **Rủi ro mức độ Cao (High Risk):** `POST /api/checkout` và `POST /api/apply-coupon`. Đây là các API liên quan trực tiếp đến luồng thanh toán và dòng tiền. Nếu logic trừ tiền sai, hậu quả business là cực kỳ nghiêm trọng. Đối với nhóm này, test case phải bao phủ toàn bộ Happy Path, Negative Path (nhập coupon sai, nhập mã hết hạn) và Edge Cases (nhập số tiền âm, spam request).
 - **Rủi ro mức độ Trung bình (Medium Risk):** `POST /api/cart` (Thêm vào giỏ). Nếu lỗi, người dùng bị gián đoạn trải nghiệm mua sắm. Cần test kiểm tra số lượng tồn kho (inventory boundary).
 - **Rủi ro mức độ Thấp (Low Risk):** `GET /api/categories`. API này chỉ đọc dữ liệu tĩnh, rất hiếm khi thay đổi. Chỉ cần test Happy Path để đảm bảo Status 200 và cấu trúc mảng trả về là đủ.
 
-### 3.2 Tự động hóa trong Continuous Integration (Chapter 9)
+### 3.2 Tự động hóa trong Continuous Integration
 Một bộ test tốt nhất thế giới cũng trở nên vô dụng nếu nó chỉ chạy trên máy cá nhân của Developer. Winteringham nhấn mạnh tầm quan trọng của việc đưa API Test vào hệ thống CI/CD để tạo ra **Vòng lặp phản hồi nhanh (Fast Feedback Loop)**.
 Bằng cách cô lập môi trường (Sử dụng Database test riêng biệt, chạy server dưới dạng background service trên GitHub Actions), chúng ta đảm bảo rằng:
 1. Môi trường chạy test là "sạch" (Clean State).
@@ -104,14 +104,20 @@ Nếu bạn vừa mới cài Postman, hãy làm theo 4 bước cực nhanh sau �
 4. Bấm nút **Send** màu xanh dương.
 *Kết quả:* Bạn sẽ thấy một bảng dữ liệu (JSON) hiện ra bên dưới chứa danh sách các sản phẩm (Laptop, Chuột, Bàn phím...). Chúc mừng, bạn vừa thực hiện thành công API Test đầu tiên của mình!
 
-### 5.1 Khái niệm về Variables & Environments
+### 5.1 Import OpenAPI Specification vào Postman
+Hệ thống EShop có sẵn file đặc tả API (OpenAPI/Swagger) tên là `api_specification.md`. Bạn có thể import trực tiếp file này vào Postman để tiết kiệm thời gian:
+1. Nhấn nút **Import** ở góc trái trên cùng của Postman.
+2. Kéo thả file `api_specification.md` (hoặc dán nội dung văn bản của file đó).
+3. Postman sẽ tự động phân tích và tạo ra một Collection hoàn chỉnh chứa đầy đủ các endpoint (GET, POST, PUT, DELETE), các tham số và cấu trúc JSON mẫu. Nhóm EShop đã dùng cách này để xây dựng bộ khung ban đầu cực kỳ nhanh chóng.
+
+### 5.2 Khái niệm về Variables & Environments
 Để test không bị gắn cứng (hardcode) với máy local, toàn bộ đường dẫn được cấu hình dưới dạng biến `{{baseUrl}}`.
 Tạo một Environment tên là `EShop_Local` với các biến:
 - `baseUrl`: `http://localhost:3000/api`
 - `token`: (Để trống, sẽ được script tự động điền)
 - `order_id`: (Để trống)
 
-### 5.2 Lập trình Request Chaining (Gọi luồng liên hoàn)
+### 5.3 Lập trình Request Chaining (Gọi luồng liên hoàn)
 Một trong những kỹ thuật mạnh nhất của Postman là trích xuất dữ liệu từ Response của API trước, làm đầu vào (Input) cho API sau.
 **Kịch bản mô phỏng:** Đăng nhập -> Thêm sản phẩm vào giỏ -> Lấy giỏ hàng.
 
@@ -136,7 +142,7 @@ if (jsonData.token) {
 **Bước 2: API Thêm giỏ hàng (`POST /cart`)**
 Ở tab **Authorization**, cấu hình Type là `Bearer Token`, và mục Token điền `{{token}}`. Hệ thống sẽ tự lấy Token vừa lưu ở Bước 1 để xác thực.
 
-### 5.3 Viết Data-Driven & Edge Case Assertions
+### 5.4 Viết Data-Driven & Edge Case Assertions
 Trong tab **Tests** của API `POST /apply-coupon`, nhóm viết logic kiểm tra toán học khắt khe nhằm chống lại lỗi business logic (Chương 4 của Winteringham):
 ```javascript
 pm.test("Toán học: Tiền giảm giá phải chính xác", function () {
@@ -156,6 +162,12 @@ pm.test("Toán học: Tiền giảm giá phải chính xác", function () {
 });
 ```
 *Ghi chú:* Cách viết này ngăn chặn triệt để lỗi Backend trả về số tiền giảm giá lớn hơn cả tổng tiền giỏ hàng (Một bug cực kỳ kinh điển trong ngành E-commerce).
+
+### 5.5 Chạy tự động hàng loạt với Collection Runner
+Để không phải bấm nút Send từng API một, Postman cung cấp tính năng **Collection Runner**:
+1. Click vào dấu `...` bên cạnh tên Collection và chọn **Run collection**.
+2. Một màn hình liệt kê toàn bộ các kịch bản sẽ hiện ra. Bạn nhấn nút **Run**.
+3. Postman sẽ tự động chạy lần lượt tất cả các API từ trên xuống dưới (có kế thừa Token nhờ Request Chaining) và in ra một báo cáo tổng quan (Run Summary) cực kỳ trực quan với màu Xanh (Pass) và Đỏ (Fail). Nhóm EShop dùng tính năng này để bắt các lỗi logic ngầm của Backend.
 
 ---
 
@@ -245,8 +257,8 @@ Developer chỉ cần vào giao diện GitHub Actions, tải file Zip chứa rep
 
 ---
 
-## 9. Phân tích Điểm mù (Failure Modes - 3 Case Studies)
-Đây là phần cốt lõi chứng minh tính thực tiễn của đồ án. Máy móc/Công cụ đôi khi "nói dối" và khiến kỹ sư kiểm thử (QA) rơi vào cái bẫy False Positive (Tưởng là đúng nhưng thực ra là sai). Dưới đây là 3 "cú lừa" kinh điển:
+## 9. Phân tích Điểm mù (Failure Modes - 5 Case Studies)
+Đây là phần cốt lõi chứng minh tính thực tiễn của đồ án. Máy móc/Công cụ đôi khi "nói dối" và khiến kỹ sư kiểm thử (QA) rơi vào cái bẫy False Positive (Tưởng là đúng nhưng thực ra là sai). Dưới đây là 5 "cú lừa" kinh điển:
 
 ### Case Study 1 (Postman): Cái bẫy Silent Failure trong Sandbox
 - **Ngữ cảnh:** Kỹ sư QA viết đoạn mã kiểm tra logic tính tổng tiền giỏ hàng. Nhưng trong lúc gõ phím, họ gõ sai chính tả hàm JSON: `let data = pm.response.jsson();` (Dư chữ s).
@@ -270,6 +282,16 @@ Developer chỉ cần vào giao diện GitHub Actions, tải file Zip chứa rep
   Khi chạy Provider Verification, công cụ Pact lại **BÁO PASS 100%**. Tại sao?
   Vì Pact tuân thủ quy tắc Postel's Law trong thiết kế API: *"Hãy bảo thủ với những gì bạn gửi đi, nhưng khoan dung với những gì bạn nhận lại"*. Miễn là Backend trả ĐỦ `name` và `email`, việc dư thừa bao nhiêu trường rác khác Pact không quan tâm.
 - **Bài học (Cách khắc phục):** Tuyệt đối không dùng Contract Testing để kiểm tra Bảo mật (Security/Penetration Testing). Phải kết hợp với JSON Schema Validation của Postman (thêm cờ `"additionalProperties": false`) để bắt lỗi rò rỉ trường dữ liệu ngoài ý muốn.
+
+### Case Study 4 (Postman): Lỗi so sánh kiểu dữ liệu ngầm định (Type Mismatch)
+- **Ngữ cảnh:** API backend trả về dữ liệu bị sai kiểu (ví dụ trả về `price` dạng chuỗi `"28000000"` thay vì số nguyên `28000000`).
+- **Hiện tượng:** Nếu trong tab Tests sử dụng `pm.expect(price).to.eql(28000000);`, test sẽ báo fail với thông báo mơ hồ như *AssertionError: expected '28000000' to deeply equal 28000000*. Người mới dùng rất dễ nhầm lẫn rằng logic API tính toán sai giá tiền, chứ không nhận ra đó là lỗi ép kiểu dữ liệu do khác biệt ở dấu nháy đơn.
+- **Bài học (Cách khắc phục):** Tester phải dùng strict equality hoặc các hàm kiểm tra type rõ ràng (ví dụ: `.to.be.a('number')`) mới bắt lỗi một cách minh bạch.
+
+### Case Study 5 (Postman): Quên cấu hình Environment/Token (Unresolved Variables)
+- **Ngữ cảnh:** Quên chọn Environment ở góc phải trên cùng (đang ở trạng thái "No Environment"), khiến các biến như `{{baseUrl}}` hay `{{token}}` không có giá trị.
+- **Hiện tượng:** Postman **không báo lỗi cú pháp ngay** mà gửi nguyên cái chuỗi chữ `{{baseUrl}}` đi làm URL thực tế. Kết quả là hệ thống trả về lỗi `404 Not Found` hoặc `401 Unauthorized`. Người test sẽ mất hàng giờ đồng hồ để debug API backend trong khi nguyên nhân thực sự chỉ là quên cấu hình môi trường.
+- **Bài học (Cách khắc phục):** Luôn tập thói quen kiểm tra góc phải màn hình xem Environment đã được kích hoạt đúng hay chưa trước khi bấm Send. Viết Pre-request script để cảnh báo nếu phát hiện thiếu biến cục bộ.
 
 ---
 
