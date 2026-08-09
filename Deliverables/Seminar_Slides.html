@@ -1138,25 +1138,25 @@
 
       <div class="cols" style="top:170px;">
         <div class="col">
-          <div class="banner red">Vấn đề khi chạy thủ công</div>
+          <div class="banner red">Hạn chế của Kiểm thử Thủ công</div>
           <div class="cov-item">
-            <div class="h bad">Dễ bỏ quên (Human Error)</div>
-            <div class="d">Khi sắp tới deadline release, Developer thường lười chạy lại toàn bộ mớ test scripts khổng lồ và chọn cách gộp code đại khái.</div>
+            <div class="h bad">Sai sót do yếu tố con người (Human Error)</div>
+            <div class="d">Khi đối mặt với áp lực thời hạn bàn giao (deadline), kỹ sư dễ bỏ sót hoặc bỏ qua việc thực thi đầy đủ các bộ kịch bản kiểm thử API lớn.</div>
           </div>
           <div class="cov-item">
-            <div class="h bad">"Máy tôi chạy được" (Works on my machine)</div>
-            <div class="d">Test thành công mỹ mãn dưới máy cá nhân vì có sẵn biến môi trường xịn, nhưng lên Server công ty thì sập toàn tập do thiếu Data.</div>
+            <div class="h bad">Sai lệch môi trường (Environment Drift)</div>
+            <div class="d">Kịch bản kiểm thử chạy thành công ở máy cá nhân nhờ các cấu hình cục bộ, nhưng dễ thất bại khi triển khai lên máy chủ do thiếu dữ liệu hoặc cấu hình khác biệt.</div>
           </div>
         </div>
         <div class="col">
-          <div class="banner green">Giải pháp Tự động hóa CI/CD</div>
+          <div class="banner green">Giải pháp Tự động hóa với CI/CD</div>
           <div class="cov-item">
-            <div class="h ok">Môi trường "vô trùng" (Clean State)</div>
-            <div class="d">Máy ảo Ubuntu của GitHub Actions luôn khởi tạo trắng tinh. Code chạy được trên này nghĩa là 100% không phụ thuộc rác ở máy cá nhân.</div>
+            <div class="h ok">Môi trường chuẩn hóa (Clean Environment)</div>
+            <div class="d">GitHub Actions khởi tạo một máy ảo độc lập và sạch hoàn toàn. Code kiểm thử chạy thành công tại đây đảm bảo tính độc lập và không phụ thuộc cấu hình cá nhân.</div>
           </div>
           <div class="cov-item">
-            <div class="h ok">Chốt chặn tự động (Quality Gate)</div>
-            <div class="d">GitHub sẽ không cho phép Merge Pull Request nếu Newman báo 400 Bad Request hoặc Pact phát hiện sai Hợp đồng. Bảo vệ nhánh <code>main</code> an toàn tuyệt đối.</div>
+            <div class="h ok">Chốt chặn Chất lượng tự động (Quality Gate)</div>
+            <div class="d">Hệ thống tự động ngăn chặn việc gộp mã nguồn (Merge Pull Request) nếu Newman phát hiện lỗi logic API hoặc Pact phát hiện vi phạm hợp đồng cấu trúc.</div>
           </div>
         </div>
       </div>
@@ -1181,19 +1181,19 @@
           </div>
           <div class="flow-row">
             <div class="flow-num">2</div>
-            <div class="flow-body"><b>Boot Backend Server</b><br><span class="flow-desc">Lệnh <code>npm start &amp;</code> kích hoạt server ngầm trên
+            <div class="flow-body"><b>Boot Backend Server</b><br><span class="flow-desc">Lệnh <code>node server.js &amp;</code> kích hoạt server ngầm trên
                 port 3000 ảo của GitHub.</span></div>
           </div>
           <div class="flow-row">
             <div class="flow-num">3</div>
-            <div class="flow-body"><b>Wait-on Module</b><br><span class="flow-desc">Dùng tool thăm dò <code>wait-on http://localhost:3000</code> để hold quy trình lại cho đến khi Server sẵn sàng nhận Request.</span></div>
+            <div class="flow-body"><b>Wait-on Module</b><br><span class="flow-desc">Dùng tool thăm dò <code>npx wait-on http://localhost:3000</code> để hold quy trình lại cho đến khi Server sẵn sàng nhận Request.</span></div>
           </div>
         </div>
         <div class="col">
-          <div class="banner blue">2. Càn quét &amp; Xuất báo cáo</div>
+          <div class="banner blue">2. Thực thi &amp; Xuất báo cáo</div>
           <div class="flow-row">
             <div class="flow-num">4</div>
-            <div class="flow-body"><b>Newman API Testing</b><br><span class="flow-desc">Newman nã liên thanh 25 API test cases vào server ngầm vừa bật lên để kiểm tra nghiệp vụ EShop.</span></div>
+            <div class="flow-body"><b>Newman API Testing</b><br><span class="flow-desc">Newman thực thi toàn bộ kịch bản kiểm thử API tích hợp để xác minh tính chính xác nghiệp vụ của EShop.</span></div>
           </div>
           <div class="flow-row">
             <div class="flow-num">5</div>
@@ -1202,7 +1202,7 @@
           </div>
           <div class="flow-row">
             <div class="flow-num">6</div>
-            <div class="flow-body"><b>Upload HTML Reports</b><br><span class="flow-desc">Chỉ thị <code>if: always()</code> được dùng để dù Job bị FAIL, máy chủ vẫn gói file Báo cáo HTML ném trả về cho QA đọc log.</span></div>
+            <div class="flow-body"><b>Upload HTML Reports</b><br><span class="flow-desc">Chỉ thị <code>if: always()</code> đảm bảo lưu trữ báo cáo HTML và logs kiểm thử làm Artifacts kể cả khi có bước thất bại.</span></div>
           </div>
         </div>
       </div>
@@ -1228,15 +1228,15 @@
         <tbody>
           <tr>
             <td class="key">1. Trigger Pipeline</td>
-            <td>Mở nhánh <code>feature/add-coupon</code>, tạo 1 Pull Request lách luật vào nhánh chính để kích hoạt Actions.</td>
+            <td>Tạo 1 Pull Request trên nhánh tính năng vào nhánh chính để kích hoạt Actions chạy pipeline tự động.</td>
           </tr>
           <tr>
             <td class="key">2. Quan sát Live Log</td>
-            <td>Mở tab Actions, xem tiến trình chạy tuần tự màu đen ngầu lòi: Server đang khởi chạy, Newman bắt đầu bắn Request.</td>
+            <td>Mở tab Actions, xem tiến trình chạy tuần tự của máy ảo thực hiện cài đặt và chạy song song Newman và Pact.</td>
           </tr>
           <tr>
-            <td class="key">3. Đọc báo cáo xịn sò</td>
-            <td>Tải gói Artifacts <code>EShop-Test-Reports.zip</code> ở góc phải. Mở file `report.html` (thư viện htmlextra) cho khán giả chiêm ngưỡng giao diện biểu đồ bánh cực kỳ chuyên nghiệp.</td>
+            <td class="key">3. Đọc báo cáo trực quan</td>
+            <td>Tải gói Artifacts <code>EShop-Test-Reports.zip</code> ở góc phải. Mở file <code>newman-report.html</code> (thư viện htmlextra) để phân tích lỗi logic hoặc kiểm tra logs từ Pact.</td>
           </tr>
         </tbody>
       </table>
