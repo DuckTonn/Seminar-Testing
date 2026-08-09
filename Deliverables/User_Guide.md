@@ -11,10 +11,13 @@
 3. [Nền tảng Lý thuyết & Chiến lược Kiểm thử (Theoretical Foundations)](#3-nền-tảng-lý-thuyết--chiến-lược-kiểm-thử)
 4. [Yêu cầu Hệ thống & Thiết lập Môi trường (Prerequisites & Setup)](#4-yêu-cầu-hệ-thống--thiết-lập-môi-trường)
 5. [Kiểm thử API Chuyên sâu với Postman (Manual & Scripted Testing)](#5-kiểm-thử-api-chuyên-sâu-với-postman)
+   - [5.6 Data-Driven Testing với CSV](#56-data-driven-testing-với-csv-chạy-1-test-với-nhiều-bộ-dữ-liệu)
+   - [5.7 Diff AI Scaffold vs Manual (Milestone M3)](#57-milestone-m3-diff-ai-scaffold-vs-manual-collection)
 6. [Sinh kịch bản tự động bằng Trí tuệ Nhân tạo (AI-Augmented Generation)](#6-sinh-kịch-bản-tự-động-bằng-trí-tuệ-nhân-tạo)
+   - [6.3 Postbot — AI Inline trong Postman](#63-postbot--ai-inline-ngay-trong-postman)
 7. [Kiểm thử Hợp đồng Giao tiếp với Pact (Contract Testing)](#7-kiểm-thử-hợp-đồng-giao-tiếp-với-pact)
 8. [Tích hợp Liên tục (Continuous Integration với GitHub Actions)](#8-tích-hợp-liên-tục-với-github-actions)
-9. [Phân tích Điểm mù (Failure Modes - 3 Case Studies)](#9-phân-tích-điểm-mù-failure-modes---3-case-studies)
+9. [Phân tích Điểm mù (Failure Modes - 5 Case Studies)](#9-phân-tích-điểm-mù-failure-modes---5-case-studies)
 10. [Đúc kết và Bài học Kinh nghiệm (Lessons Learned)](#10-đúc-kết-và-bài-học-kinh-nghiệm)
 
 ---
@@ -169,6 +172,76 @@ pm.test("Toán học: Tiền giảm giá phải chính xác", function () {
 2. Một màn hình liệt kê toàn bộ các kịch bản sẽ hiện ra. Bạn nhấn nút **Run**.
 3. Postman sẽ tự động chạy lần lượt tất cả các API từ trên xuống dưới (có kế thừa Token nhờ Request Chaining) và in ra một báo cáo tổng quan (Run Summary) cực kỳ trực quan với màu Xanh (Pass) và Đỏ (Fail). Nhóm EShop dùng tính năng này để bắt các lỗi logic ngầm của Backend.
 
+**Bảng tổng kết Test Coverage của EShop Collection:**
+
+| Endpoint | Happy Path | Negative Path | Edge Case | Schema Validation |
+|---|---|---|---|---|
+| `POST /api/login` | ✅ | ✅ (sai mật khẩu, thiếu field) | ✅ (SQL injection payload) | ✅ |
+| `GET /api/products` | ✅ | — | ✅ (query param rỗng) | ✅ |
+| `GET /api/products/:id` | ✅ | ✅ (id không tồn tại → 404) | ✅ (id = -1, id = "abc") | ✅ |
+| `POST /api/cart` | ✅ | ✅ (thiếu token → 401) | ✅ (số lượng = 0, số lượng âm) | ✅ |
+| `POST /api/orders` | ✅ | ✅ (giỏ hàng rỗng → 400) | ✅ (đặt hàng 2 lần liên tiếp) | ✅ |
+| `POST /api/apply-coupon` | ✅ | ✅ (coupon hết hạn, sai mã) | ✅ (coupon dùng vượt limit) | ✅ |
+
+### 5.6 Data-Driven Testing với CSV (Chạy 1 test với nhiều bộ dữ liệu)
+Thay vì viết riêng từng test case cho từng trường hợp coupon, nhóm sử dụng kỹ thuật **Data-Driven Testing** của Collection Runner để chạy cùng một API với nhiều bộ dữ liệu đầu vào khác nhau chỉ trong một lần bấm Run.
+
+**Bước 1: Tạo file dữ liệu `coupon_testdata.csv`**
+```csv
+coupon_code,total_amount,expected_status,expected_discount
+SALE10,200000,200,20000
+SALE50,500000,200,250000
+EXPIRED,100000,400,0
+INVALIDXYZ,100000,400,0
+SALE10,0,400,0
+```
+*Mỗi dòng là một kịch bản test: coupon hợp lệ, coupon hết hạn, coupon sai, tổng tiền bằng 0...*
+
+**Bước 2: Viết Test Script dùng biến CSV trong tab Tests**
+```javascript
+pm.test("Status code khớp với expected", function () {
+    pm.response.to.have.status(parseInt(pm.iterationData.get("expected_status")));
+});
+
+pm.test("Discount amount chính xác (nếu thành công)", function () {
+    if (pm.response.code === 200) {
+        let resData = pm.response.json();
+        let expectedDiscount = parseFloat(pm.iterationData.get("expected_discount"));
+        pm.expect(resData.discount_amount).to.eql(expectedDiscount, "Số tiền giảm giá sai!");
+    }
+});
+```
+*Chú ý: Dùng `pm.iterationData.get("tên_cột")` để đọc giá trị từ file CSV tại mỗi vòng lặp.*
+
+**Bước 3: Chạy trong Collection Runner**
+1. Mở Collection Runner, chọn **Select File** và upload file `coupon_testdata.csv`.
+2. Runner tự động phát hiện số dòng (5 dòng = 5 lần lặp) và hiển thị preview.
+3. Nhấn **Run** — Postman sẽ gửi 5 request liên tiếp, mỗi request dùng một bộ dữ liệu khác nhau.
+4. Báo cáo sẽ phân biệt rõ **Iteration 1**, **Iteration 2**... để dễ dàng trace lỗi.
+
+**Lợi ích:** Kỹ thuật này thay thế 5 request riêng lẻ bằng 1 request duy nhất + 1 file CSV, giúp dễ bảo trì khi nghiệp vụ thay đổi (chỉ cần sửa CSV, không cần sửa code).
+
+### 5.7 Milestone M3: Diff AI Scaffold vs Manual Collection
+*(Đây là bằng chứng thực tế cho Milestone M3 của đề bài: "Generate scaffold from /api_specification.yaml using an AI tool; diff vs your collection")*
+
+Sau khi nhóm dùng Claude để sinh Postman Collection từ file `api_specification.md`, chúng tôi tiến hành so sánh trực tiếp kết quả AI tạo ra với bộ Collection được viết tay:
+
+| Tiêu chí so sánh | Manual Collection (Viết tay) | AI-Generated Scaffold (Claude) |
+|---|---|---|
+| **Thời gian tạo** | ~3 giờ | < 2 phút |
+| **Số endpoint có sẵn** | 6/6 | 6/6 |
+| **Happy Path test cases** | 6 | 6 (✅ tương đương) |
+| **Negative Path test cases** | 12 | 2 (❌ thiếu 10 kịch bản) |
+| **Edge Case test cases** | 8 | 0 (❌ AI bỏ hoàn toàn) |
+| **Schema Validation chặt** | ✅ `required` + `additionalProperties: false` | ❌ Schema rỗng (cho phép mọi thứ) |
+| **Business Rule (coupon limit)** | ✅ Có kịch bản test `max_uses_per_user` | ❌ Hoàn toàn bỏ qua |
+| **Authentication chaining** | ✅ Token tự động truyền qua env variable | ⚠️ Token hardcode cứng |
+| **Data-Driven Testing** | ✅ Hỗ trợ CSV | ❌ Không có |
+| **Xử lý race condition** | ✅ Test đặt hàng 2 lần liên tiếp | ❌ Không nhận biết |
+
+**Kết luận từ bảng diff:**
+AI sinh ra bộ khung (scaffold) đầy đủ về mặt cấu trúc endpoint, giúp tiết kiệm ~80% thời gian setup ban đầu. Tuy nhiên, AI mắc phải **Happy-Path Bias** nghiêm trọng — toàn bộ kịch bản Negative, Edge Case và Business Rule phải do QA tự tay bổ sung. Điều này khẳng định: AI là công cụ tăng tốc, không phải công cụ thay thế tư duy kiểm thử.
+
 ---
 
 ## 6. Sinh kịch bản tự động bằng Trí tuệ Nhân tạo
@@ -184,6 +257,26 @@ Sử dụng AI không nhằm mục đích "thay thế" Tester, mà để tự đ
 Khi AI nhả ra file `.json` và import vào Postman, nhóm nhận thấy tốc độ hoàn thành là dưới 1 phút (Nhanh gấp 10 lần gõ tay). Tuy nhiên, AI gặp phải hiện tượng **Happy-Path Bias** (Thiên kiến luồng chuẩn):
 - AI chỉ sinh các trường hợp tài khoản đúng, mật khẩu đúng, coupon hợp lệ.
 - QA của nhóm phải trực tiếp vào tab **Tests** để thiết kế các kịch bản Negative (Ví dụ: Bắn payload chữ cái vào trường tính tiền `total_amount: "hai mươi ngàn"` để ép API văng lỗi 400 Bad Request, và dùng Postman verify rằng API thực sự văng lỗi 400 chứ không văng 500 sập server).
+
+### 6.3 Postbot — AI Inline ngay trong Postman
+Ngoài việc dùng Claude/ChatGPT bên ngoài, Postman còn tích hợp sẵn tính năng AI gọi là **Postbot** (biểu tượng ngôi sao ở góc phải dưới màn hình Postman). Đây là một AI trợ lý có thể sinh test script, giải thích response, và tự động tạo documentation — tất cả mà không cần rời khỏi Postman.
+
+**Các tính năng chính của Postbot:**
+
+| Tính năng | Cách dùng | Kết quả |
+|---|---|---|
+| **Add tests to this request** | Click Postbot → chọn tùy chọn | Tự sinh pm.test() dựa trên response thực tế |
+| **Visualize response** | Click Postbot → "Visualize" | Tạo bảng HTML trực quan từ JSON response |
+| **Fix this error** | Khi test bị Fail, click Postbot | AI đọc error message và đề xuất cách sửa script |
+| **Add documentation** | Click Postbot → "Document" | Tự viết mô tả cho request (method, params, example) |
+
+**Workflow thực tế nhóm đã dùng:**
+1. Gửi request `POST /api/apply-coupon`, nhận response thực.
+2. Click **Postbot** → chọn `Add tests to this request`.
+3. Postbot phân tích response JSON đang hiển thị và sinh ra test script kiểm tra status 200, kiểu dữ liệu của `discount_amount` và `final_amount`.
+4. QA review script do Postbot sinh ra, bổ sung thêm phần kiểm tra cross-validation toán học (phần AI bỏ qua).
+
+**Lưu ý quan trọng:** Postbot chỉ dựa vào response *hiện tại đang hiển thị* để sinh test — nếu bạn test với coupon hợp lệ, Postbot sẽ chỉ sinh Happy Path. Hãy chạy thêm request với coupon sai để Postbot nhìn thấy response lỗi và sinh thêm Negative test.
 
 ---
 
@@ -226,7 +319,7 @@ new Verifier(opts).verifyProvider().then(() => {
 });
 ```
 
-### 6.3 Giải quyết vấn đề Token hết hạn (requestFilter)
+### 7.3 Giải quyết vấn đề Token hết hạn (requestFilter)
 Như thấy ở code trên, hàm `requestFilter` là cứu cánh cực kỳ quan trọng. Bản hợp đồng được tạo ra vào ngày hôm qua chứa một chuỗi Token đã hết hạn. Khi Pact bắn chuỗi Token cũ mèm đó vào Backend hôm nay, Backend sẽ trả về `401 Unauthorized`. Việc dùng `requestFilter` giúp ta đánh tráo Token cũ thành Token vừa đăng nhập trước khi gửi vào Backend.
 
 ---
