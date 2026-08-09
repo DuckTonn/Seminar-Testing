@@ -583,16 +583,79 @@ pm.expect(tv4.validate(pm.response.json(), schema)).to.be.true;
 <!-- ================================================================ -->
 
 
-## 7. Kiểm thử Hợp đồng Giao tiếp với Pact
-Nếu như Postman dùng để test Logic, thì Pact dùng để test Cấu trúc Dữ liệu (Schema/Contract).
+## 7. Kiểm thử Hợp đồng Giao tiếp với Pact (Contract Testing)
+Nếu như Postman dùng để test Logic (như tính toán sai tiền), thì Pact dùng để test Cấu trúc Dữ liệu (Schema/Contract) giữa các microservices hoặc Client-Server. 
 
-### 7.1 Tổng quan về Provider Verification
-Đề bài yêu cầu triển khai luồng Provider Verification cho Node backend. Ở bước này, Backend (Provider) đóng vai trò bị động: Nó đứng yên, chờ công cụ Pact đọc file hợp đồng `.json` (do Frontend - Consumer tạo ra từ trước) và bắn request vào.
+### 7.1 Cơ chế hoạt động của Contract Testing
+Khác với API Testing truyền thống, Contract Testing chia làm hai giai đoạn độc lập:
+1. **Consumer Test (Tạo Hợp Đồng):** Phía Frontend/Client đóng vai trò chủ động (Consumer). Họ định nghĩa các "kỳ vọng" đối với API, ví dụ như gửi Request thế nào và mong nhận lại Response có cấu trúc ra sao. Kết quả của bước này là một file `.json` hợp đồng (Pact file) được sinh ra.
+2. **Provider Verification (Xác Minh Hợp Đồng):** Phía Backend (Provider) đóng vai trò bị động. Hệ thống sẽ đọc file `.json` do Consumer tạo ra, tự động giả lập lại các Request và đối chiếu Response của Backend với kỳ vọng trong hợp đồng.
 
-### 7.2 Thiết lập Provider States (Quản lý trạng thái)
-Đây là phần khó nhất của Contract Testing. Trong hợp đồng, Frontend yêu cầu: *"Khi tôi gửi ID = 1, anh phải trả về tên sản phẩm"*. 
-Nhưng nếu Database test đang trống rỗng thì API sẽ văng 404 Not Found, dẫn đến Fail hợp đồng dù API không hề code sai!
-**Cách giải quyết:** Nhóm lập trình các `stateHandlers` trong file `provider.test.js`.
+### 7.2 Triển khai Consumer Test (Phía Frontend)
+Để đảm bảo hợp đồng mang tính khách quan, nhóm triển khai kịch bản Consumer Test sử dụng Jest và `PactV3`.
+**Quy trình 3 bước cốt lõi:**
+1. **Sử dụng Matchers, Không dùng Giá trị cứng:** Thay vì yêu cầu API trả về đúng `price: 50000`, chúng ta dùng Matchers (như `MatchersV3.like`, `MatchersV3.string`) để ép ràng buộc kiểu dữ liệu. Điều này ngăn chặn Flaky test khi dữ liệu trong database thật bị thay đổi.
+2. **Thiết lập Interactions:**
+   - `.given(...)`: Mô tả trạng thái giả định của Backend (Ví dụ: "Sản phẩm có ID 1 tồn tại").
+   - `.withRequest(...)`: Chi tiết phương thức, tham số, headers.
+   - `.willRespondWith(...)`: Cấu trúc JSON trả về.
+3. **Cấu hình và Thực thi (Chạy hàng loạt Test):** 
+   Do dự án có nhiều module cần test (4 file: `auth.consumer.test.js`, `cart.consumer.test.js`, `checkout.consumer.test.js`, `products.consumer.test.js`), nhóm đã cấu hình tự động gom (merge) hợp đồng trong file `package.json` thuộc thư mục `contract_testing`:
+   ```json
+   "scripts": {
+     "test:pact": "jest test/.*\\.consumer\\.test\\.js",
+     "test:provider": "jest test/provider.test.js"
+   }
+   ```
+   Tại terminal, di chuyển vào thư mục `contract_testing` và chạy lệnh:
+   ```bash
+   npm run test:pact
+   ```
+   Khi chạy lệnh này, Pact sẽ duyệt qua toàn bộ 4 file test, dựng Mock Server, nhận request từ axios/fetch và lưu/update file hợp đồng duy nhất vào thư mục `pacts/`.
+
+#### Hướng dẫn đọc log từ Terminal / CMD (Phía Consumer)
+Khi Consumer test chạy (dựa trên nền tảng Jest), bạn cần chú ý các thông điệp log sau:
+- **INFO (Mock Server):** Khi test chạy, Pact Mock Server sẽ in ra các dòng INFO báo hiệu nó đã nhận được request. Ví dụ: `INFO tokio-rt-worker pact_mock_server::hyper_server: Received request POST /api/checkout`. Nếu theo sau đó là thông điệp `Request matched, sending response`, có nghĩa là request của bạn gửi lên khớp chuẩn hợp đồng.
+- **WARN (Cảnh báo an toàn):** Bạn sẽ thấy rất nhiều log báo vàng (WARN) kiểu như `Failed to parse '' as a content type` hay `Existing pact is an older specification version`. Đừng hoảng sợ, đây chỉ là các cảnh báo do engine core (viết bằng Rust) ném ra và **hoàn toàn không ảnh hưởng** đến tính đúng đắn của hợp đồng. Bạn có thể tự tin phớt lờ chúng.
+- **Pass (Xanh lá - PASS):** Khúc cuối cùng của log, Jest sẽ hiển thị chữ `PASS` màu xanh bên cạnh tên file (ví dụ: `PASS test/cart.consumer.test.js`). Điều này khẳng định file hợp đồng `.json` đã được tổng hợp và ghi nhận thành công vào thư mục `/pacts/`.
+- **Fail (Đỏ - FAIL):** Nếu chữ `FAIL` xuất hiện (Interaction Error), nguyên nhân thường do **Request thực tế** (code gọi API axios của bạn) bị sai lệch (sai HTTP Method, sai URL, hoặc thiếu tham số Headers) so với định nghĩa `.withRequest(...)`. Lúc này, hãy cuộn Terminal lên tìm bảng "Actual vs Expected" để truy vết chỗ sai.
+
+### 7.3 Triển khai Provider Verification (Phía Backend)
+Đây là phần trọng tâm được yêu cầu trong đồ án EShop. Công cụ Pact sẽ nạp file `frontend-eshop_backend.json` và bắn request trực tiếp vào Backend (chạy ở cổng 3000).
+
+> [!WARNING]
+> **Lưu ý cực kỳ quan trọng:** Trước khi chạy lệnh xác minh hợp đồng của Pact, bạn **BẮT BUỘC** phải đảm bảo Backend SUT (System Under Test) đang chạy (ví dụ chạy `node server.js` ở thư mục `backend` và phải thấy log *Server is running on http://localhost:3000*). Nếu Backend không chạy, Pact sẽ lập tức đánh Fail hợp đồng với mã lỗi `ECONNREFUSED` (Connection Refused).
+
+Để tiến hành xác minh, hãy mở một Terminal/CMD mới (vẫn giữ nguyên Terminal đang chạy Backend), di chuyển vào thư mục `contract_testing` và gõ lệnh:
+```bash
+npm run test:provider
+```
+
+#### Hướng dẫn đọc log từ Terminal / CMD (Phía Provider)
+Khi quá trình verification kết thúc, Pact sẽ in báo cáo chi tiết ra Terminal. Kỹ năng đọc log là rất quan trọng:
+- **Pass (Xanh lá - OK):** API test thành công, cấu trúc JSON của Backend trả về khớp 100% với kỳ vọng trong hợp đồng. Ví dụ trong log:
+  ```text
+    a request to add item to cart (2ms loading, 164ms verification)
+       Given a valid auth token exists, user cart is empty, and product with ID 1 exists
+      returns a response which
+        has status code 200 (OK)
+        has a matching body (OK)
+  ```
+- **Fail (Đỏ - FAILED):** API test thất bại do logic backend trả về không đúng với Contract đã định (ví dụ sai type hoặc missing key). Ví dụ:
+  ```text
+    a request to add item to cart with empty body (2ms loading, 20ms verification)
+       Given a valid auth token exists, user cart is empty, and product with ID 1 exists
+      returns a response which
+        has status code 400 (FAILED)
+        has a matching body (FAILED)
+  ```
+  Khi gặp lỗi FAILED này, bạn cần **cuộn màn hình Terminal lên** để tìm phần **"Diff"**. Pact sẽ in ra một bảng so sánh khác biệt (bằng dấu `+` màu xanh và `-` màu đỏ) rất trực quan, chỉ đích danh trường dữ liệu nào bị sai kiểu, hoặc bị thiếu sót. Dựa vào đó, Developer Backend có thể khoanh vùng và sửa lại Controller tương ứng ngay lập tức.
+
+#### 7.3.1 Thiết lập Provider States (Quản lý trạng thái) - Yếu tố Khó Nhất
+Trong hợp đồng, Consumer yêu cầu: *"Khi tôi gửi ID = 1, anh phải trả về tên sản phẩm"*. 
+Nhưng nếu Database test ở Backend đang trống rỗng thì API sẽ văng `404 Not Found`, dẫn đến Fail hợp đồng dù API không hề code sai!
+**Cách giải quyết:** Nhóm lập trình các `stateHandlers` để tiêm dữ liệu giả lập (Fixture Data) khớp chính xác 100% với trạng thái `.given()` của Consumer:
+
 ```javascript
 const { Verifier } = require('@pact-foundation/pact');
 
@@ -601,7 +664,7 @@ const opts = {
   pactUrls: ['./pacts/frontend-eshop_backend.json'],
   stateHandlers: {
     "Sản phẩm có ID 1 tồn tại": async () => {
-      // Logic cấy dữ liệu giả vào Database
+      // Logic cấy dữ liệu giả vào Database trước khi Pact bắn request
       await db.query("INSERT INTO products (id, name, price) VALUES (1, 'Sản phẩm Test', 50000)");
       return Promise.resolve();
     },
@@ -622,8 +685,14 @@ new Verifier(opts).verifyProvider().then(() => {
 });
 ```
 
-### 7.3 Giải quyết vấn đề Token hết hạn (requestFilter)
-Như thấy ở code trên, hàm `requestFilter` là cứu cánh cực kỳ quan trọng. Bản hợp đồng được tạo ra vào ngày hôm qua chứa một chuỗi Token đã hết hạn. Khi Pact bắn chuỗi Token cũ mèm đó vào Backend hôm nay, Backend sẽ trả về `401 Unauthorized`. Việc dùng `requestFilter` giúp ta đánh tráo Token cũ thành Token vừa đăng nhập trước khi gửi vào Backend.
+#### 7.3.2 Giải quyết vấn đề Token hết hạn (`requestFilter`)
+Trong đoạn code trên, tham số `requestFilter` đóng vai trò sinh tử khi test các endpoint yêu cầu xác thực. Bản hợp đồng (file `.json`) được tạo ra bởi Consumer có thể chứa một chuỗi Token đã hết hạn từ tuần trước. Nếu Provider Verification gửi đúng chuỗi Token cũ mèm đó vào Backend, nó sẽ lập tức bị chặn lại với lỗi `401 Unauthorized` và đánh trượt hợp đồng.
+Thông qua `requestFilter`, chúng ta thiết lập một trạm gác (middleware) để đánh tráo Token cũ thành một Token tươi mới ngay trước khi Request chạm vào API.
+
+### 7.4 Những Best Practices Rút Ra Từ Pact
+1. **State Handlers phải mapping 1:1:** Chuỗi mô tả `given` ở Consumer phải khớp hoàn toàn tới từng ký tự với key trong `stateHandlers` ở Provider. Một ký tự khoảng trắng thừa cũng khiến Pact báo lỗi State Not Found.
+2. **Không lạm dụng Contract Test để test Business Logic:** Pact sinh ra để xác nhận cấu trúc (Schema) của API, chứ không phải để tính toán tiền khuyến mãi đúng hay sai (Đó là nhiệm vụ của Postman).
+3. **Quản lý file độc lập:** Tách riêng log file của Pact ra (ví dụ thư mục `logs/pact.log`) để dễ dàng đọc và debug khi có dấu hiệu bất đồng bộ hợp đồng thay vì in tất cả ra terminal.
 
 ---
 

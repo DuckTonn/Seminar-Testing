@@ -27,27 +27,40 @@
     body {
       margin: 0;
       padding: 0;
-      background: #5b6673;
+      background: #2b3036;
       font-family: 'Inter', Arial, "Helvetica Neue", sans-serif;
       color: var(--ink);
+      overflow: hidden;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .deck {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 28px;
-      padding: 36px 0 60px;
+      position: relative;
+      width: 1280px;
+      height: 720px;
     }
 
     .slide {
       width: 1280px;
       height: 720px;
       background: var(--white);
-      position: relative;
+      position: absolute;
+      top: 0;
+      left: 0;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, .35);
-      flex-shrink: 0;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .5);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      z-index: 10;
     }
 
     /* ---------- shared chrome ---------- */
@@ -410,10 +423,7 @@
 
     /* page nav (screen-only) */
     .navhint {
-      color: #c9d2dd;
-      font-size: 13px;
-      text-align: center;
-      margin-top: -8px;
+      display: none;
     }
 
     @media print {
@@ -934,40 +944,7 @@
     </div>
     <div class="navhint">Slide 10B / 21</div>
 
-    <!-- SLIDE 11 : IN CLASS ACTIVITY -->
-    <div class="slide">
-      <div class="topbar"></div>
-      <div class="breadcrumb">EShop Seminar · In-Class Activity</div>
-      <div class="title green">Hoạt động lớp học: Spec-to-Tests Sprint</div>
-      <div class="subtitle">Trải nghiệm thực tế sức mạnh và giới hạn của AI so với viết tay thủ công.</div>
-
-      <div class="cols" style="top:170px;">
-        <div class="col">
-          <div class="banner">Luật chơi (25 Phút)</div>
-          <div class="cov-item">
-            <div class="h ok">Phân chia lực lượng</div>
-            <div class="d">Một nửa khán phòng viết Test cho API `POST /coupon/redeem` hoàn toàn bằng tay (Manual). Nửa còn lại dùng Prompt với AI (ChatGPT/Claude).</div>
-          </div>
-          <div class="cov-item">
-            <div class="h ok">Đua tốc độ (10 Phút)</div>
-            <div class="d">Thi xem bên nào hoàn thiện xong 5 Test Cases (gồm cả Negative cases) nhanh nhất.</div>
-          </div>
-          <div class="cov-item">
-            <div class="h warn">Đối chiếu & Review (15 Phút)</div>
-            <div class="d">Hai bên chấm chéo bài cho nhau. Liệt kê các Edge Cases (Bug nghiệp vụ hóc búa) mà AI đã hoàn toàn bỏ sót nhưng não bộ con người thì nghĩ ra được.</div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="banner green">Scan QR để nhận Worksheet</div>
-          <div style="display:flex; justify-content:center; margin-top:20px;">
-            <div style="width:200px; height:200px; background:#ddd; border:4px solid var(--navy); display:flex; align-items:center; justify-content:center; font-weight:bold;">[QR CODE MOCKUP]</div>
-          </div>
-          <div style="text-align:center; margin-top:10px; font-weight:bold; color:var(--navy);">Tải Activity Worksheet tại đây</div>
-        </div>
-      </div>
-      <div class="footer">11 · In-Class Activity</div>
-    </div>
-    <div class="navhint">Slide 11 / 21</div>
+    <!-- SLIDE 11 : (Deleted In-Class Activity) -->
 
 
 
@@ -1059,37 +1036,107 @@
     </div>
     <div class="navhint">Slide 13 / 21</div>
 
-    <!-- SLIDE 14 : Pact Failure Modes (table) -->
+    <!-- SLIDE 14 : Consumer Test (Frontend) -->
     <div class="slide">
       <div class="topbar"></div>
       <div class="breadcrumb">EShop Seminar · T06_API_and_Contract_Testing</div>
-      <div class="title red">Pact Mechanics & Lưu ý Bảo mật</div>
-      <div class="subtitle">Những cơ chế cấu hình nâng cao và điểm mù cần tránh khi dùng Pact.</div>
+      <div class="title">Giai đoạn 1: Consumer Test (Phía Frontend)</div>
+      <div class="subtitle">Sử dụng PactV3 &amp; Jest để sinh hợp đồng giao tiếp mà không phụ thuộc Backend.</div>
+
+      <div class="cols" style="top:170px;">
+        <div class="col">
+          <div class="banner">1. Quy tắc cốt lõi: Matchers</div>
+          <div class="cov-item">
+            <div class="h ok">Ràng buộc Kiểu (Type) thay vì Giá trị</div>
+            <div class="d">Để tránh <b>Flaky Test</b> (test tịt vì DB đổi giá trị), ta tuyệt đối KHÔNG dùng giá trị cứng (như <code>price: 50000</code>). Thay vào đó, dùng Matchers như <code>MatchersV3.like()</code> hay <code>MatchersV3.string()</code> để kiểm chứng cấu trúc.</div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="banner blue">2. Thiết lập Interactions (3 Bước)</div>
+          <div class="flow-row">
+            <div class="flow-num">A</div>
+            <div class="flow-body"><b>.given()</b><br><span class="flow-desc">Mô tả trạng thái giả định. VD: "Sản phẩm có ID 1 tồn tại".</span></div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-num">B</div>
+            <div class="flow-body"><b>.withRequest()</b><br><span class="flow-desc">Định nghĩa HTTP Method, URL, Headers và tham số truy vấn.</span></div>
+          </div>
+          <div class="flow-row">
+            <div class="flow-num">C</div>
+            <div class="flow-body"><b>.willRespondWith()</b><br><span class="flow-desc">Kết xuất JSON kỳ vọng trả về. Khởi chạy test sẽ sinh Mock Server và <b>tổng hợp thành file .json hợp đồng</b>.</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">14 · Consumer Test</div>
+    </div>
+    <div class="navhint">Slide 14 / 21</div>
+
+    <!-- SLIDE 15 : Provider Verification (Backend) -->
+    <div class="slide">
+      <div class="topbar"></div>
+      <div class="breadcrumb">EShop Seminar · T06_API_and_Contract_Testing</div>
+      <div class="title">Giai đoạn 2: Provider Verification (Phía Backend)</div>
+      <div class="subtitle">Đóng vai Frontend để bắn Request vào Backend thật và đối chiếu kết quả.</div>
+
+      <div class="cols" style="top:170px;">
+        <div class="col">
+          <div class="banner red">Yếu tố khó nhất: State Handlers</div>
+          <div class="cov-item">
+            <div class="h bad">Nỗi đau: 404 Not Found</div>
+            <div class="d">Nếu hợp đồng đòi kiểm tra "ID = 1" mà DB test đang rỗng, API sẽ văng 404 và làm hỏng test (dù code API không sai).</div>
+          </div>
+          <div class="cov-item">
+            <div class="h ok">Giải pháp: Fixture Data</div>
+            <div class="d">Lập trình <code>stateHandlers</code> với Key <b>khớp 100%</b> với chuỗi <code>.given()</code> của FE, tiêm dữ liệu giả vào Database ngay trước khi Pact bắn request.</div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="banner blue">Yếu tố tử huyệt: requestFilter</div>
+          <div class="cov-item">
+            <div class="h bad">Nỗi đau: 401 Unauthorized</div>
+            <div class="d">Hợp đồng cũ từ tuần trước chứa Token đã hết hạn. Nếu gửi y xì sẽ bị văng 401.</div>
+          </div>
+          <div class="cov-item">
+            <div class="h ok">Giải pháp: Đánh tráo Token</div>
+            <div class="d">Dùng Hook <code>requestFilter</code> để đánh chặn Request, cạo bỏ Header cũ và <b>tiêm một JWT Token tươi mới</b> (vừa đăng nhập) vào trước khi Request tới Controller.</div>
+          </div>
+        </div>
+      </div>
+      <div class="footer">15 · Provider Verification</div>
+    </div>
+    <div class="navhint">Slide 15 / 21</div>
+
+    <!-- SLIDE 16 : Pact Best Practices -->
+    <div class="slide">
+      <div class="topbar"></div>
+      <div class="breadcrumb">EShop Seminar · T06_API_and_Contract_Testing</div>
+      <div class="title red">Pact Best Practices &amp; Lưu ý Bảo mật</div>
+      <div class="subtitle">Những nguyên tắc cốt lõi và điểm mù nguy hiểm cần tránh khi dùng Pact.</div>
 
       <table class="tbl" style="top:170px;">
         <thead>
           <tr>
-            <th class="red" style="width:230px;">Vấn đề / Cơ chế</th>
-            <th class="red">Giải thích &amp; Cách xử lý</th>
+            <th class="red" style="width:230px;">Nguyên tắc / Vấn đề</th>
+            <th class="red">Giải thích &amp; Hệ quả</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td class="key">Bỏ qua Provider States</td>
-            <td>Thiếu trạng thái ban đầu khiến Backend test hay thất bại. VD: FE đòi kiểm tra thông tin User 123, nhưng DB lúc đó đang trống rỗng. <b>Cơ chế State Handlers:</b> Viết script chạy trước để "bơm" User 123 vào DB trước khi Pact Verify.</td>
+            <td class="key">Mapping State Handlers 1:1</td>
+            <td>Chuỗi mô tả <code>given()</code> ở Consumer phải <b>khớp hoàn toàn tới từng ký tự</b> với Key trong <code>stateHandlers</code> ở Provider. Dư một khoảng trắng cũng khiến Pact báo lỗi State Not Found.</td>
           </tr>
           <tr>
-            <td class="key">Lỗi Token hết hạn (401)</td>
-            <td>File JSON hợp đồng lưu lại Token cũ rích của FE sinh ra hôm qua. Hôm nay BE Verify báo lỗi 401 Unauthorized. <b>Cơ chế Request Filters:</b> Dùng hook của Pact để chặn request lại, cạo bỏ token cũ và nhét token mới tinh vào trước khi gửi đi.</td>
+            <td class="key">Không test Business Logic</td>
+            <td>Pact sinh ra để xác nhận Cấu trúc (Schema/Types), không phải để tính toán. Đừng viết Contract bắt Backend trả đúng "Tổng tiền = 50k sau mã giảm giá". (Đó là nhiệm vụ của Postman Test).</td>
           </tr>
           <tr>
             <td class="key" style="color:var(--red);">Rò rỉ dữ liệu (Postel's Law)</td>
-            <td>Pact tuân theo Định luật Postel: "Khoan dung với những gì bạn nhận được". <b>Nếu Backend lỡ làm lộ trường <code>password_hash</code>, Pact vẫn BÁO PASS xanh rờn</b> (vì nó chỉ quan tâm các trường FE cần đã có đủ, dư thì kệ). Tuyệt đối không dùng Pact để Security Test!</td>
+            <td>Pact tuân theo Định luật Postel: "Khoan dung với những gì bạn nhận được". <b>Nếu Backend lỡ làm lộ trường <code>password_hash</code>, Pact vẫn BÁO PASS xanh rờn</b> (nó chỉ quan tâm những gì FE đòi đã đủ chưa, dư thì kệ). Tuyệt đối không dùng Pact để Security Test!</td>
           </tr>
         </tbody>
       </table>
 
-      <div class="footer">16 · Pact Mechanics & Security Warning</div>
+      <div class="footer">16 · Best Practices &amp; Security Warning</div>
     </div>
     <div class="navhint">Slide 16 / 21</div>
 
@@ -1111,16 +1158,12 @@
         <tbody>
           <tr>
             <td class="key">1. Consumer Test</td>
-            <td>Chạy kịch bản test ảo phía Web UI. Show cho khán giả xem file <code>web-ui-product-api.json</code> vừa được Pact đúc ra thành công.
+            <td>Chạy kịch bản test ảo phía Web UI. Show cho khán giả xem file <code>EshopConsumer-EShopBackend.json</code> vừa được Pact đúc ra thành công.
             </td>
           </tr>
           <tr>
             <td class="key">2. Provider Verification</td>
-            <td>Bật Backend server lên, gọi lệnh Pact Verification đối chiếu. Hiện chữ PASS màu xanh vì 2 bên đang đồng thuận hợp đồng.</td>
-          </tr>
-          <tr>
-            <td class="key">3. Break the Contract!</td>
-            <td>Nhóm đóng vai Backend vô tình làm Breaking Change: Đổi tên biến <code>price</code> thành <code>amount</code> trong code API. Chạy lại Verification -> Pact báo FAILED màu đỏ rực, ngăn chặn một thảm họa sập Frontend.</td>
+            <td>Bật Backend server lên, gọi lệnh Pact Verification đối chiếu. Hiện kết quả hợp đồng giữa 2 bên.</td>
           </tr>
         </tbody>
       </table>
@@ -1260,6 +1303,46 @@
     <div class="navhint">Slide 21 / 21</div>
 
   </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const slides = document.querySelectorAll('.slide');
+      const total = slides.length;
+      let currentIndex = 0;
+
+      // Update footers dynamically based on total slides
+      slides.forEach((slide, index) => {
+        const footer = slide.querySelector('.footer');
+        if (footer) {
+          const parts = footer.innerHTML.split('·');
+          const title = parts.length > 1 ? parts[1].trim() : '';
+          footer.innerHTML = `${index + 1} / ${total} &middot; ${title}`;
+        }
+      });
+
+      const showSlide = (index) => {
+        slides.forEach(s => s.classList.remove('active'));
+        slides[index].classList.add('active');
+      };
+
+      // Initialize first slide
+      if (total > 0) showSlide(0);
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+          if (currentIndex < total - 1) {
+            currentIndex++;
+            showSlide(currentIndex);
+          }
+        } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          if (currentIndex > 0) {
+            currentIndex--;
+            showSlide(currentIndex);
+          }
+        }
+      });
+    });
+  </script>
 </body>
 
 </html>
