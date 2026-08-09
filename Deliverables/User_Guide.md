@@ -22,6 +22,15 @@
 
 ---
 
+
+
+<!-- ================================================================ -->
+<!-- # PHAN CUA TOAN (1) - Section 1,2,3,4: Executive Summary / Intro / Theory / Setup -->
+<!-- Toan chiu trach nhiem: Section 1 den Section 4 (phan kien truc va setup chung) -->
+<!-- Xoa comment nay khi da hoan thien va ready to merge -->
+<!-- ================================================================ -->
+
+
 ## 1. Tóm tắt Cấp cao & Kiến trúc Hệ thống
 Hệ thống EShop được xây dựng dựa trên kiến trúc Microservices (hoặc Client-Server tách rời hoàn toàn). Toàn bộ giao tiếp giữa Frontend (Web/Mobile) và Backend đều diễn ra thông qua RESTful APIs. Mặc dù kiến trúc này mang lại sự linh hoạt trong việc mở rộng quy mô (scaling), nó lại đặt ra một bài toán hóc búa về đảm bảo chất lượng: **"Làm sao để đảm bảo Server không bất ngờ thay đổi cấu trúc dữ liệu khiến Client bị sập (crash)?"**
 
@@ -95,6 +104,15 @@ Pact hoạt động dựa trên nguyên lý **Consumer-Driven Contracts (Hợp �
 6. Nếu Terminal hiển thị `Server is running on http://localhost:3000`, SUT đã sẵn sàng để nhận request.
 
 ---
+
+
+
+<!-- ================================================================ -->
+<!-- # PHAN CUA TOAN (2) - Section 5: Postman Testing (cac subsection 5.0 -> 5.7) -->
+<!-- Toan chiu trach nhiem: Postman Collection, Request Chaining, Data-Driven, Newman -->
+<!-- Xoa comment nay khi da hoan thien va ready to merge -->
+<!-- ================================================================ -->
+
 
 ## 5. Kiểm thử API Chuyên sâu với Postman
 Đây là phương pháp kiểm thử cốt lõi (Traditional Tool). Chúng tôi không chỉ dùng Postman để gửi các request rời rạc, mà sử dụng **Postman Sandbox** (môi trường thực thi JavaScript) để mô phỏng một chuỗi hành vi người dùng cực kỳ phức tạp.
@@ -244,6 +262,15 @@ AI sinh ra bộ khung (scaffold) đầy đủ về mặt cấu trúc endpoint, g
 
 ---
 
+
+
+<!-- ================================================================ -->
+<!-- # PHAN CUA KHOA (1) - Section 6: AI-Augmented Testing (6.1 -> 6.3) -->
+<!-- Khoa chiu trach nhiem: Prompt Engineering, AI Scaffold Refining, Postbot -->
+<!-- Xoa comment nay khi da hoan thien va ready to merge -->
+<!-- ================================================================ -->
+
+
 ## 6. Sinh kịch bản tự động bằng Trí tuệ Nhân tạo
 Sử dụng AI không nhằm mục đích "thay thế" Tester, mà để tự động hóa khâu tạo Boilerplate (mã lặp lại). Nhóm sử dụng mô hình "Spec-to-Test Generation".
 
@@ -279,6 +306,15 @@ Ngoài việc dùng Claude/ChatGPT bên ngoài, Postman còn tích hợp sẵn t
 **Lưu ý quan trọng:** Postbot chỉ dựa vào response *hiện tại đang hiển thị* để sinh test — nếu bạn test với coupon hợp lệ, Postbot sẽ chỉ sinh Happy Path. Hãy chạy thêm request với coupon sai để Postbot nhìn thấy response lỗi và sinh thêm Negative test.
 
 ---
+
+
+
+<!-- ================================================================ -->
+<!-- # PHAN CUA NAM (1) - Section 7: Contract Testing voi Pact (7.1 -> 7.3) -->
+<!-- Nam chiu trach nhiem: Consumer Test, Provider Verification, requestFilter -->
+<!-- Xoa comment nay khi da hoan thien va ready to merge -->
+<!-- ================================================================ -->
+
 
 ## 7. Kiểm thử Hợp đồng Giao tiếp với Pact
 Nếu như Postman dùng để test Logic, thì Pact dùng để test Cấu trúc Dữ liệu (Schema/Contract).
@@ -324,6 +360,15 @@ Như thấy ở code trên, hàm `requestFilter` là cứu cánh cực kỳ quan
 
 ---
 
+
+
+<!-- ================================================================ -->
+<!-- # PHAN CUA LUAN (1) - Section 8: CI/CD voi GitHub Actions (8.1 -> 8.2) -->
+<!-- Luan chiu trach nhiem: Workflow YAML, Newman pipeline, HTML Extra report, Artifacts -->
+<!-- Xoa comment nay khi da hoan thien va ready to merge -->
+<!-- ================================================================ -->
+
+
 ## 8. Tích hợp Liên tục với GitHub Actions
 Mọi đoạn script trên máy cá nhân đều không có ý nghĩa nếu code lỗi vẫn được merge vào server chính. Nhóm đã tích hợp toàn bộ Postman (thông qua Newman) và Pact vào file `.github/workflows/test.yml`.
 
@@ -349,6 +394,16 @@ Sử dụng plugin `newman-reporter-htmlextra`, báo cáo xuất ra không chỉ
 Developer chỉ cần vào giao diện GitHub Actions, tải file Zip chứa report HTML về và mở bằng trình duyệt để xem tận mắt API nào đang lỗi, lỗi ở dòng nào.
 
 ---
+
+
+
+<!-- ================================================================ -->
+<!-- # PHAN CUA NAM (2) - Section 9: Failure Modes (tong hop tu Toan + Khoa + Luan) -->
+<!-- Nam tong hop: Failure Modes cua ca 3 tool: Postman (Toan), AI (Khoa), Pact (Luan) -->
+<!-- Toan: viet Case Study 1 & 4 | Khoa: viet Case Study 2 | Luan: kiem tra Case Study 5 -->
+<!-- Xoa comment nay khi da hoan thien va ready to merge -->
+<!-- ================================================================ -->
+
 
 ## 9. Phân tích Điểm mù (Failure Modes - 5 Case Studies)
 Đây là phần cốt lõi chứng minh tính thực tiễn của đồ án. Máy móc/Công cụ đôi khi "nói dối" và khiến kỹ sư kiểm thử (QA) rơi vào cái bẫy False Positive (Tưởng là đúng nhưng thực ra là sai). Dưới đây là 5 "cú lừa" kinh điển:
@@ -387,6 +442,15 @@ Developer chỉ cần vào giao diện GitHub Actions, tải file Zip chứa rep
 - **Bài học (Cách khắc phục):** Luôn tập thói quen kiểm tra góc phải màn hình xem Environment đã được kích hoạt đúng hay chưa trước khi bấm Send. Viết Pre-request script để cảnh báo nếu phát hiện thiếu biến cục bộ.
 
 ---
+
+
+
+<!-- ================================================================ -->
+<!-- # PHAN CUA NAM (3) - Section 10: Lessons Learned (tong hop ca nhom) -->
+<!-- Nam tong hop: Duc ket kinh nghiem chung cua ca 4 nguoi -->
+<!-- Xoa comment nay khi da hoan thien va ready to merge -->
+<!-- ================================================================ -->
+
 
 ## 10. Đúc kết và Bài học Kinh nghiệm
 Quãng thời gian 2 tháng nghiên cứu và triển khai đề tài T06 mang lại cái nhìn sâu sắc cho toàn nhóm về hệ sinh thái QA hiện đại.
